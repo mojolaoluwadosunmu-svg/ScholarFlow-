@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ScholarFlow AI — Your Academic Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{height:100%;font-size:16px;-webkit-text-size-adjust:100%}
+body{height:100%;font-family:'Lato',system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,select,textarea{font-family:inherit;font-size:inherit}
+a{color:inherit}
+
+/* ─── THEMES ─── */
+:root{
+  --bg:#FBF8F3;--bg2:#F5F0E8;--surface:#FFFFFF;--surface2:#FAF7F2;--surface3:#F2EDE3;
+  --border:#E8E0D0;--border2:#D9D0BE;
+  --text:#1E1A14;--text2:#5A5248;--text3:#968E82;
+  --accent:#2E6B50;--accent2:#3D8A65;--accent-l:#EBF5EF;--accent-f:#F4FAF6;
+  --gold:#B8864E;--gold2:#D4A06A;--gold-l:#FDF3E7;--gold-f:#FEF9F3;
+  --red:#C0392B;--red-l:#FDECEA;
+  --blue:#1A5F8A;--blue-l:#E8F2FA;
+  --side-bg:#1C1814;--side-bg2:#252018;--side-tx:#EDE6DC;--side-tx2:#9A9080;--side-act:#3D8A65;
+  --sh-xs:0 1px 3px rgba(0,0,0,.06);--sh-sm:0 2px 8px rgba(0,0,0,.08);
+  --sh-md:0 4px 16px rgba(0,0,0,.10);--sh-lg:0 8px 32px rgba(0,0,0,.12);
+  --r-sm:8px;--r-md:12px;--r-lg:16px;--r-xl:20px;
+  --sw:260px;--sw-c:64px;--cpw:200px;--mob-nav:62px;--t:.2s ease;
+}
+[data-theme="dark"]{
+  --bg:#131110;--bg2:#1A1815;--surface:#1E1C18;--surface2:#252220;--surface3:#2C2926;
+  --border:#333028;--border2:#3D3A30;
+  --text:#EDE6DC;--text2:#A09880;--text3:#6A6255;
+  --accent:#4AA870;--accent2:#5CC882;--accent-l:#1A3028;--accent-f:#131E18;
+  --gold:#C49050;--gold2:#D4A878;--gold-l:#2A2010;--gold-f:#1E1810;
+  --red:#E05050;--red-l:#2A1418;--blue:#4A9AC8;--blue-l:#0E2030;
+  --side-bg:#0E0C09;--side-bg2:#161410;--side-tx:#EDE6DC;--side-tx2:#5A5248;--side-act:#4AA870;
+  --sh-xs:0 1px 3px rgba(0,0,0,.3);--sh-sm:0 2px 8px rgba(0,0,0,.4);
+  --sh-md:0 4px 16px rgba(0,0,0,.5);--sh-lg:0 8px 32px rgba(0,0,0,.6);
+}
+[data-theme="sage"]{
+  --bg:#F4F7F4;--bg2:#E8EFE8;--surface:#FFFFFF;--surface2:#F0F5F0;--surface3:#E4ECE4;
+  --border:#C8D8C8;--border2:#B0C4B0;
+  --text:#1A2A1A;--text2:#4A5E4A;--text3:#7A8E7A;
+  --accent:#3A7A4A;--accent2:#4A9A5E;--accent-l:#E0F0E0;--accent-f:#F0F8F0;
+  --gold:#A07830;--gold2:#C09440;--gold-l:#FFF0D0;--gold-f:#FFF8E8;
+  --red:#C03030;--red-l:#FFE0E0;--blue:#2060A0;--blue-l:#D0E8FF;
+  --side-bg:#1A2A1A;--side-bg2:#243024;--side-tx:#E8F0E8;--side-tx2:#8A9E8A;--side-act:#4A9A5E;
+  --sh-xs:0 1px 3px rgba(0,40,0,.07);--sh-sm:0 2px 8px rgba(0,40,0,.09);
+  --sh-md:0 4px 16px rgba(0,40,0,.11);--sh-lg:0 8px 32px rgba(0,40,0,.14);
+}
+[data-theme="sunset"]{
+  --bg:#FDF6EE;--bg2:#F7EBD8;--surface:#FFFFFF;--surface2:#FDF0E4;--surface3:#F5E4D0;
+  --border:#EAD4B8;--border2:#D4B898;
+  --text:#2A1800;--text2:#6A4020;--text3:#AA8060;
+  --accent:#B05020;--accent2:#D06030;--accent-l:#FFE8D8;--accent-f:#FFF4EE;
+  --gold:#C08030;--gold2:#E0A040;--gold-l:#FFF4D0;--gold-f:#FFFAE8;
+  --red:#C02020;--red-l:#FFE0E0;--blue:#2050A0;--blue-l:#D0E4FF;
+  --side-bg:#2A1800;--side-bg2:#3A2410;--side-tx:#FDEBD8;--side-tx2:#9A7050;--side-act:#D06030;
+  --sh-xs:0 1px 3px rgba(60,20,0,.08);--sh-sm:0 2px 8px rgba(60,20,0,.10);
+  --sh-md:0 4px 16px rgba(60,20,0,.13);--sh-lg:0 8px 32px rgba(60,20,0,.16);
+}
+[data-theme="ocean"]{
+  --bg:#F0F6FB;--bg2:#E0EEF8;--surface:#FFFFFF;--surface2:#EAF3FC;--surface3:#D8ECF8;
+  --border:#B8D8F0;--border2:#90C4E8;
+  --text:#0A1E30;--text2:#2A5070;--text3:#6090B0;
+  --accent:#1060A0;--accent2:#2080C0;--accent-l:#D0E8FF;--accent-f:#EAF4FF;
+  --gold:#906020;--gold2:#B08030;--gold-l:#FFF4D0;--gold-f:#FFFAE8;
+  --red:#C02030;--red-l:#FFE0E4;--blue:#1060A0;--blue-l:#D0E8FF;
+  --side-bg:#061828;--side-bg2:#0E2438;--side-tx:#D8EEFF;--side-tx2:#5888A8;--side-act:#2080C0;
+  --sh-xs:0 1px 3px rgba(0,20,60,.07);--sh-sm:0 2px 8px rgba(0,20,60,.09);
+  --sh-md:0 4px 16px rgba(0,20,60,.12);--sh-lg:0 8px 32px rgba(0,20,60,.15);
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes slideR{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideU{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastPop{from{opacity:0;transform:translateY(20px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes shimmer{from{background-position:-200% 0}to{background-position:200% 0}}
+
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+
+/* ─── LAYOUT ─── */
+#app{display:flex;height:100vh;height:100dvh;background:var(--bg);color:var(--text);overflow:hidden;position:relative;transition:background var(--t),color var(--t)}
+#app.pre-auth-hidden{display:none!important}
+
+/* ─── SIDEBAR ─── */
+#sidebar{width:var(--sw);background:var(--side-bg);display:flex;flex-direction:column;flex-shrink:0;transition:width var(--t),transform var(--t);overflow:hidden;z-index:30;border-right:1px solid rgba(255,255,255,.05)}
+#sidebar.collapsed{width:var(--sw-c)}
+.sb-logo{display:flex;align-items:center;gap:12px;padding:20px 16px 14px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.sb-lm{width:38px;height:38px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,var(--accent) 0%,var(--gold) 100%);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 10px rgba(0,0,0,.3)}
+.sb-lt{overflow:hidden;white-space:nowrap;transition:opacity var(--t),width var(--t)}
+.sb-ln{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--side-tx);line-height:1.1}
+.sb-ls{font-size:10px;color:var(--side-tx2);letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+#sidebar.collapsed .sb-lt{opacity:0;width:0;pointer-events:none}
+.sb-proj{margin:10px 10px 4px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.09);border-radius:var(--r-sm);padding:10px 12px;cursor:pointer;transition:background var(--t);overflow:hidden;flex-shrink:0}
+.sb-proj:hover{background:rgba(255,255,255,.10)}
+.sb-pl{font-size:10px;color:var(--side-tx2);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;white-space:nowrap}
+.sb-pn{font-size:13px;font-weight:600;color:var(--side-tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+.sb-pm{font-size:11px;color:var(--side-tx2);margin-top:2px;white-space:nowrap}
+#sidebar.collapsed .sb-proj{display:none}
+.sb-nav{flex:1;padding:8px 6px;overflow-y:auto;overflow-x:hidden}
+.sb-sl{font-size:10px;color:var(--side-tx2);text-transform:uppercase;letter-spacing:.12em;padding:10px 10px 4px;white-space:nowrap}
+#sidebar.collapsed .sb-sl{opacity:0}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r-sm);cursor:pointer;transition:all var(--t);color:var(--side-tx2);font-size:13.5px;white-space:nowrap;overflow:hidden;margin-bottom:2px;position:relative}
+.ni:hover{background:rgba(255,255,255,.07);color:var(--side-tx)}
+.ni.active{background:rgba(255,255,255,.1);color:var(--side-act)!important}
+.ni.active::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:0 3px 3px 0;background:var(--side-act)}
+.ni-ic{font-size:16px;flex-shrink:0;width:20px;text-align:center;line-height:1}
+.ni-lb{overflow:hidden;transition:opacity var(--t),width var(--t)}
+#sidebar.collapsed .ni-lb{opacity:0;width:0}
+.sb-bot{padding:10px 8px 14px;border-top:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.sb-cb{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--r-sm);cursor:pointer;color:var(--side-tx2);font-size:13px;transition:all var(--t);white-space:nowrap}
+.sb-cb:hover{background:rgba(255,255,255,.06);color:var(--side-tx)}
+
+/* ─── CHAPTER PANEL ─── */
+#cp{width:var(--cpw);background:var(--surface);border-right:1.5px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden;transition:background var(--t),border-color var(--t)}
+.cp-hd{padding:14px 14px 10px;border-bottom:1.5px solid var(--border);flex-shrink:0}
+.cp-ht{font-family:'Playfair Display',serif;font-size:12.5px;font-weight:600;color:var(--text2);letter-spacing:.04em}
+.cp-ls{flex:1;overflow-y:auto}
+.chi{display:flex;align-items:center;gap:9px;padding:10px 12px;cursor:pointer;transition:all var(--t);border-left:3px solid transparent;border-bottom:1px solid var(--border)}
+.chi:hover{background:var(--surface2)}
+.chi.active{background:var(--accent-f);border-left-color:var(--accent);color:var(--accent)!important}
+.chi-ic{font-size:15px;flex-shrink:0}
+.chi-in{flex:1;overflow:hidden}
+.chi-nm{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:inherit}
+.chi-sb{font-size:11px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.chi-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.cp-pr{padding:12px 14px;border-top:1.5px solid var(--border);flex-shrink:0}
+.cp-prl{font-size:11px;color:var(--text3);margin-bottom:6px;display:flex;justify-content:space-between}
+.pb{height:5px;border-radius:3px;background:var(--border);overflow:hidden}
+.pbf{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s ease}
+
+/* ─── MAIN ─── */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;transition:background var(--t)}
+
+/* ─── TOPBAR ─── */
+#tb{background:var(--surface);border-bottom:1.5px solid var(--border);padding:0 20px;display:flex;align-items:center;gap:10px;height:56px;flex-shrink:0;box-shadow:var(--sh-xs);z-index:10;transition:background var(--t),border-color var(--t)}
+.tb-hbg{display:none;width:38px;height:38px;border-radius:var(--r-sm);align-items:center;justify-content:center;font-size:18px;color:var(--text2);cursor:pointer;flex-shrink:0;transition:all var(--t)}
+.tb-hbg:hover{background:var(--surface2)}
+.tb-ic{font-size:20px;flex-shrink:0}
+.tb-inf{flex:1;min-width:0}
+.tb-ti{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-su{font-size:12px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tb-act{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.sv-badge{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text3);white-space:nowrap}
+.sv-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;transition:background var(--t)}
+.sv-dot.saved{background:var(--accent)}.sv-dot.saving{background:var(--gold);animation:pulse 1s infinite}
+
+/* ─── BODY ─── */
+#body{flex:1;overflow:hidden;position:relative}
+
+/* ─── WORKSPACE TOOLBAR ─── */
+#ws-tb{padding:10px 16px;background:var(--surface2);border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0;transition:background var(--t)}
+.ws-tl{display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex:1;min-width:0}
+.ws-tr{display:flex;align-items:center;gap:5px;flex-wrap:wrap;flex-shrink:0}
+.tdiv{width:1px;height:20px;background:var(--border);flex-shrink:0}
+
+/* ─── INSTRUCTION PANEL ─── */
+#ip{padding:14px 18px;background:var(--gold-f);border-bottom:1.5px solid var(--border);animation:fadeUp .2s ease;flex-shrink:0;overflow:auto;max-height:300px;transition:background var(--t)}
+.ip-hd{font-family:'Playfair Display',serif;font-size:13.5px;font-weight:600;color:var(--gold);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.ip-gr{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px}
+.cit-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+
+/* ─── EDITOR ─── */
+#ws-lay{display:flex;height:100%;overflow:hidden}
+#ws-ea{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+#ws-sc{flex:1;overflow-y:auto;padding:24px 20px;background:var(--bg);transition:background var(--t)}
+.dc{background:var(--surface);border-radius:var(--r-lg);border:1.5px solid var(--border);min-height:460px;box-shadow:var(--sh-sm);max-width:780px;margin:0 auto;overflow:hidden;transition:background var(--t),border-color var(--t)}
+.dc-hd{padding:14px 22px 12px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:10px;background:linear-gradient(to bottom,var(--surface2),var(--surface));transition:background var(--t)}
+.dc-hi{font-size:20px}.dc-ht{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--text)}.dc-hs{font-size:12px;color:var(--text3);margin-top:1px}
+#ced{width:100%;min-height:400px;border:none;outline:none;resize:none;background:transparent;font-family:'Crimson Pro',Georgia,serif;font-size:17px;line-height:1.85;color:var(--text);padding:24px;display:block;transition:color var(--t)}
+.ee{text-align:center;padding:50px 24px 36px}
+.ee-ic{font-size:48px;margin-bottom:14px;display:block}
+.ee-ti{font-family:'Playfair Display',serif;font-size:19px;color:var(--text2);margin-bottom:8px}
+.ee-su{font-size:14px;color:var(--text3);max-width:360px;margin:0 auto 20px;line-height:1.7}
+.ee-tips{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;margin-bottom:20px}
+.ee-tip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;color:var(--text2)}
+.wc{max-width:780px;margin:8px auto 0;font-size:12px;color:var(--text3);text-align:right;padding:0 4px}
+
+/* ─── AI PANEL ─── */
+#aip{width:320px;background:var(--surface);border-left:1.5px solid var(--border);display:flex;flex-direction:column;animation:slideR .22s ease;flex-shrink:0;transition:background var(--t)}
+.aip-hd{padding:13px 14px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:10px}
+.aip-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex-shrink:0;animation:pulse 2s infinite}
+.aip-ti{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;flex:1}
+.aip-bd{flex:1;overflow-y:auto;padding:14px;font-size:14px;line-height:1.75;white-space:pre-wrap;color:var(--text)}
+.aip-ft{padding:10px 14px;border-top:1.5px solid var(--border);display:flex;gap:7px}
+
+/* ─── BUTTONS ─── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 18px;border-radius:var(--r-sm);font-size:13.5px;font-weight:600;letter-spacing:.01em;transition:all var(--t);white-space:nowrap;cursor:pointer;border:1.5px solid transparent;line-height:1}
+.btn:disabled{opacity:.5;cursor:not-allowed!important}
+.btn:active:not(:disabled){transform:scale(.97)}
+.btn-p{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.btn-p:hover:not(:disabled){background:var(--accent2);border-color:var(--accent2);box-shadow:0 4px 14px rgba(0,0,0,.25);transform:translateY(-1px)}
+.btn-o{background:transparent;color:var(--accent);border-color:var(--accent)}
+.btn-o:hover:not(:disabled){background:var(--accent-l)}
+.btn-g{background:transparent;color:var(--text2);border-color:transparent}
+.btn-g:hover:not(:disabled){background:var(--surface2);color:var(--text)}
+.btn-s{background:var(--surface);color:var(--text2);border-color:var(--border)}
+.btn-s:hover:not(:disabled){border-color:var(--accent);color:var(--accent)}
+.btn-d{background:var(--red-l);color:var(--red);border-color:rgba(192,57,43,.2)}
+.btn-d:hover:not(:disabled){background:var(--red);color:#fff}
+.btn-gold{background:var(--gold);color:#fff;border-color:var(--gold)}
+.btn-gold:hover:not(:disabled){background:var(--gold2);transform:translateY(-1px)}
+.btn-sm{padding:6px 13px;font-size:12.5px;border-radius:7px}
+.btn-xs{padding:4px 9px;font-size:12px;border-radius:6px}
+.btn-ic{padding:8px;border-radius:var(--r-sm);width:36px;height:36px}
+
+/* ─── CHIPS ─── */
+.chip{padding:5px 14px;border-radius:20px;font-size:13px;cursor:pointer;border:1.5px solid var(--border);transition:all var(--t);color:var(--text2);background:var(--surface2);white-space:nowrap;user-select:none}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.chip-sm{padding:3px 10px;font-size:12px}
+
+/* ─── THEME SWATCH ─── */
+.th-sw{display:flex;gap:8px;flex-wrap:wrap}
+.th-opt{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
+.th-circle{width:32px;height:32px;border-radius:50%;border:3px solid transparent;transition:all var(--t)}
+.th-circle:hover{transform:scale(1.1)}
+.th-opt.active .th-circle{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-l)}
+.th-lbl{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+
+/* ─── FORM ─── */
+.field{margin-bottom:12px}
+.lbl{font-size:12px;font-weight:700;color:var(--text2);margin-bottom:5px;display:block;letter-spacing:.01em}
+.inp{width:100%;border:1.5px solid var(--border);border-radius:var(--r-sm);padding:9px 12px;font-size:14px;background:var(--surface);color:var(--text);outline:none;transition:border var(--t),box-shadow var(--t),background var(--t),color var(--t);-webkit-appearance:none}
+.inp:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,0,0,.06)}
+.inp::placeholder{color:var(--text3)}
+textarea.inp{resize:vertical;min-height:80px;line-height:1.6}
+select.inp{cursor:pointer;padding-right:28px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23968E82'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+
+/* ─── CARDS ─── */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-md);padding:20px;box-shadow:var(--sh-xs);transition:background var(--t),border-color var(--t)}
+.card-ti{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-gn{background:var(--accent-f);border-color:rgba(0,0,0,.08)}
+.card-gd{background:var(--gold-f);border-color:rgba(0,0,0,.08)}
+
+/* ─── PAGE ─── */
+.page{height:100%;overflow-y:auto;padding:24px 20px;animation:fadeUp .3s ease}
+.pi{max-width:920px;margin:0 auto}
+.pi-sm{max-width:740px;margin:0 auto}
+.sec-ti{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+.sec-su{font-size:14px;color:var(--text2);margin-bottom:22px;line-height:1.6}
+
+/* ─── GRIDS ─── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.ga{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+
+/* ─── SLIDES ─── */
+.scard{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-md);padding:16px;animation:fadeUp .3s ease;transition:background var(--t)}
+.sn{width:28px;height:28px;border-radius:8px;background:var(--accent-l);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.sti{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--text);line-height:1.3}
+.sbul{padding-left:16px;margin:10px 0}.sbul li{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:4px}
+.snot{background:var(--gold-f);border-radius:7px;padding:8px 10px;font-size:12px;color:var(--gold);border-left:3px solid var(--gold);margin-top:8px}
+
+/* ─── REFS ─── */
+.ri{display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:var(--r-sm);background:var(--surface2);border:1.5px solid var(--border);margin-bottom:10px;animation:fadeUp .25s ease;transition:border-color var(--t)}
+.ri:hover{border-color:var(--border2)}
+.ri-ic{width:36px;height:36px;border-radius:9px;background:var(--accent-l);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.ri-bd{flex:1;min-width:0}
+.ri-mn{font-size:14px;color:var(--text);line-height:1.5}
+.ri-sr{font-size:12px;color:var(--text2);margin-top:3px}
+.ri-ul{font-size:12px;color:var(--blue);margin-top:2px;word-break:break-all}
+.ri-mt{font-size:11px;color:var(--text3);margin-top:4px}
+
+/* ─── LOG ─── */
+.le{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-sm);background:var(--surface2);border:1.5px solid var(--border);margin-bottom:8px;transition:all var(--t)}
+.le:hover{border-color:var(--border2)}
+
+/* ─── PLANNER ─── */
+.pl-sec{margin-bottom:22px}
+.pl-sl{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;margin-bottom:10px}
+.pl-it{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:var(--r-sm);background:var(--surface);border:1.5px solid var(--border);margin-bottom:7px;transition:all var(--t)}
+.pl-it:hover{border-color:var(--border2)}
+.pl-it.done{opacity:.55}.pl-it.done .pi-ti{text-decoration:line-through}
+.pi-ti{font-size:14px;font-weight:500;flex:1}
+.pi-dt{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* ─── NOTES ─── */
+#nl-lay{display:flex;height:100%;overflow:hidden}
+#nl-pan{width:240px;background:var(--surface);border-right:1.5px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;transition:background var(--t)}
+.nlp-hd{padding:12px 14px;border-bottom:1.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.nlp-ls{flex:1;overflow-y:auto}
+.no-it{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background var(--t)}
+.no-it:hover{background:var(--surface2)}
+.no-it.active{background:var(--accent-f)}
+.no-ti{font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px}
+.no-it.active .no-ti{color:var(--accent)}
+.no-pv{font-size:12px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.no-tm{font-size:11px;color:var(--text3);margin-top:4px}
+#ne-ar{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.ne-tb{padding:14px 20px;border-bottom:1.5px solid var(--border);background:var(--surface);flex-shrink:0}
+#n-ti-i{width:100%;border:none;outline:none;font-family:'Playfair Display',serif;font-size:20px;font-weight:700;background:transparent;color:var(--text)}
+.ne-bd{flex:1;padding:20px 24px;overflow-y:auto}
+#n-ct-i{width:100%;min-height:360px;border:none;outline:none;resize:none;background:transparent;font-family:'Crimson Pro',Georgia,serif;font-size:17px;line-height:1.85;color:var(--text)}
+
+/* ─── FILES ─── */
+.uz{border:2px dashed var(--border2);border-radius:var(--r-lg);padding:40px 24px;text-align:center;cursor:pointer;background:var(--accent-f);transition:all var(--t);margin-bottom:22px}
+.uz:hover{border-color:var(--accent);background:var(--accent-l)}
+.uz-ic{font-size:40px;margin-bottom:12px;display:block}
+.uz-ti{font-family:'Playfair Display',serif;font-size:17px;color:var(--text);margin-bottom:6px}
+.uz-su{font-size:13px;color:var(--text2)}
+.fc{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:14px 16px;animation:fadeUp .22s ease;transition:all var(--t)}
+.fc:hover{border-color:var(--border2);box-shadow:var(--sh-xs)}
+.fc-ic{font-size:28px;margin-bottom:8px}
+.fc-nm{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fc-mt{font-size:11px;color:var(--text3)}
+.fc-ac{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+
+/* ─── OUTPUT ─── */
+.oc{background:var(--surface);border-radius:var(--r-md);padding:22px 24px;border:1.5px solid var(--border);margin-top:22px;animation:fadeUp .3s ease;box-shadow:var(--sh-sm);transition:background var(--t)}
+.oc-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.oc-ti{font-family:'Playfair Display',serif;font-size:16px;font-weight:600}
+.oc-bd{font-family:'Crimson Pro',Georgia,serif;font-size:16px;line-height:1.85;white-space:pre-wrap;color:var(--text)}
+.oc-acts{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ─── SETTINGS ─── */
+.sr{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);gap:16px;flex-wrap:wrap}
+.sr:last-child{border-bottom:none}
+.sr-lb{font-size:14px;color:var(--text);font-weight:500;flex:1}
+.sr-dc{font-size:12px;color:var(--text3);margin-top:2px}
+
+/* ─── MODAL ─── */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;animation:fadeIn .2s ease;backdrop-filter:blur(2px)}
+.md{background:var(--surface);border-radius:var(--r-xl);padding:26px;width:100%;max-width:480px;border:1.5px solid var(--border);box-shadow:var(--sh-lg);animation:slideU .25s ease;max-height:90vh;overflow-y:auto;transition:background var(--t)}
+.md-ti{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:18px;color:var(--text)}
+.po{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-sm);cursor:pointer;background:var(--surface2);margin-bottom:8px;border:1.5px solid var(--border);transition:all var(--t)}
+.po:hover,.po.active{border-color:var(--accent)}.po.active{background:var(--accent-f)}
+.po-ic{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;color:#fff}
+
+/* ─── EMAIL MODAL ─── */
+#email-mo{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:150;padding:16px;animation:fadeIn .2s ease;backdrop-filter:blur(3px)}
+.email-md{background:var(--surface);border-radius:var(--r-xl);padding:28px;width:100%;max-width:460px;border:1.5px solid var(--border);box-shadow:var(--sh-lg);animation:slideU .25s ease}
+.email-md .md-ti{font-size:18px}
+
+/* ─── TOAST ─── */
+#toast{position:fixed;bottom:24px;right:20px;z-index:999;border-radius:var(--r-sm);padding:11px 17px;font-size:14px;font-weight:600;box-shadow:var(--sh-md);display:flex;align-items:center;gap:8px;animation:toastPop .25s ease;max-width:calc(100vw - 40px);color:#fff}
+.t-ok{background:var(--accent)}.t-er{background:var(--red)}.t-in{background:var(--blue)}
+
+/* ─── MOBILE NAV ─── */
+#mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--mob-nav);background:var(--side-bg);border-top:1px solid rgba(255,255,255,.07);z-index:50;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+.mni{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:5px 10px;cursor:pointer;flex:1;min-width:52px;color:var(--side-tx2);font-size:9.5px;font-weight:600;transition:all var(--t);border-top:2px solid transparent;letter-spacing:.02em}
+.mni-ic{font-size:17px;line-height:1.2}
+.mni:hover{color:var(--side-tx)}.mni.active{color:var(--side-act);border-top-color:var(--side-act)}
+#mob-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:40}
+
+/* ─── UTILS ─── */
+.hidden{display:none!important}
+.flex{display:flex}.flex-col{display:flex;flex-direction:column}
+.ic{align-items:center}.jb{justify-content:space-between}.jc{justify-content:center}
+.f1{flex:1}.fw{flex-wrap:wrap}.mn0{min-width:0}
+.g6{gap:6px}.g8{gap:8px}.g10{gap:10px}.g12{gap:12px}
+.wf{width:100%}.tc{text-align:center}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}.mt24{margin-top:24px}
+.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}.mb20{margin-bottom:20px}.mb24{margin-bottom:24px}
+.es{text-align:center;padding:48px 20px;color:var(--text3)}
+.es-ic{font-size:40px;margin-bottom:12px;display:block}
+.es-tx{font-size:14px;color:var(--text3);line-height:1.6}
+.tag{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.tg{background:var(--accent-l);color:var(--accent)}.td{background:var(--gold-l);color:var(--gold)}
+
+/* ─── PRINT ─── */
+@media print{
+  #sidebar,#mob-nav,#tb,#ws-tb,#ip,#aip,#cp,.tb-act,.oc-acts,button{display:none!important}
+  #app{display:block;height:auto;overflow:visible}
+  #main,#body,.page,.oc{display:block;height:auto;overflow:visible}
+  .dc{border:none;box-shadow:none;max-width:none}
+  body{background:#fff;color:#000}
+}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:1200px){
+  :root{--sw:240px;--cpw:185px}
+}
+@media(max-width:1024px){
+  :root{--sw:220px;--cpw:175px}
+  #ced{font-size:16px;padding:18px}
+  .g3{grid-template-columns:1fr 1fr}
+  #ws-sc{padding:16px 14px}
+  #aip{width:290px}
+}
+@media(max-width:768px){
+  #sidebar{position:fixed;top:0;left:0;bottom:0;z-index:50;transform:translateX(-100%);transition:transform .28s ease,width .28s ease;width:280px!important}
+  #sidebar.mob-open{transform:translateX(0)}
+  #mob-ov{display:block}
+  #cp{display:none}
+  #mob-nav{display:flex;align-items:stretch}
+  #body{margin-bottom:var(--mob-nav)}
+  #tb{padding:0 12px;height:52px}
+  .tb-hbg{display:flex}
+  .sv-badge{display:none}
+  .page{padding:14px 14px}
+  #ws-sc{padding:12px 10px}
+  .dc{border-radius:var(--r-sm)}
+  #ced{padding:14px;font-size:15.5px}
+  .dc-hd{padding:12px 14px 10px}
+  .g2,.g3{grid-template-columns:1fr}
+  .ip-gr{grid-template-columns:1fr}
+  #ip{max-height:260px}
+  #aip{position:fixed;top:52px;bottom:var(--mob-nav);left:0;right:0;width:100%;z-index:35;border-left:none;border-top:1.5px solid var(--border)}
+  #ws-tb{padding:8px 10px;gap:5px}
+  .ws-tr{display:none}
+  #nl-lay{flex-direction:column}
+  #nl-pan{width:100%;height:200px;border-right:none;border-bottom:1.5px solid var(--border)}
+  .mo{padding:10px}
+  .md{padding:20px;border-radius:var(--r-lg);max-height:92vh}
+  .oc{padding:14px}
+  #toast{bottom:calc(var(--mob-nav) + 10px);right:10px;left:10px}
+  .sec-ti{font-size:19px}
+  .g2[style*="grid-template-columns:2fr 1fr"]{grid-template-columns:1fr!important}
+  .tb-act{gap:4px}
+}
+@media(max-width:480px){
+  .btn{padding:8px 13px;font-size:13px}
+  .chip{padding:4px 11px;font-size:12px}
+  .card{padding:14px}
+  .sec-ti{font-size:17px}
+  #tb{height:50px}
+  .tb-ti{font-size:14px}
+  .ga{grid-template-columns:1fr 1fr}
+  .mni{min-width:48px;font-size:9px}
+  .email-md,.md{padding:18px}
+}
+@media(max-width:380px){
+  .mni{min-width:44px;padding:5px 6px}
+  .ga{grid-template-columns:1fr}
+}
+
+/* ─── RICH TEXT EDITOR ─── */
+#rte-bar{display:flex;align-items:center;gap:2px;padding:8px 14px;background:var(--surface2);border-bottom:1.5px solid var(--border);flex-wrap:wrap;flex-shrink:0;transition:background var(--t)}
+.rte-btn{width:30px;height:30px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--text2);cursor:pointer;border:1.5px solid transparent;transition:all var(--t);flex-shrink:0;line-height:1}
+.rte-btn:hover{background:var(--surface3);color:var(--text);border-color:var(--border)}
+.rte-btn.active{background:var(--accent-l);color:var(--accent);border-color:var(--accent)}
+.rte-div{width:1px;height:20px;background:var(--border);margin:0 4px;flex-shrink:0}
+.rte-sel{font-size:12px;border:1.5px solid var(--border);border-radius:6px;padding:4px 6px;background:var(--surface);color:var(--text);outline:none;cursor:pointer;max-width:120px;transition:border var(--t)}
+.rte-sel:focus{border-color:var(--accent)}
+#rte-ed{flex:1;overflow-y:auto;padding:24px;font-family:'Crimson Pro',Georgia,serif;font-size:17px;line-height:1.85;color:var(--text);outline:none;background:transparent;min-height:400px;transition:color var(--t)}
+#rte-ed:empty::before{content:attr(data-placeholder);color:var(--text3);pointer-events:none}
+#rte-ed h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin:20px 0 10px;color:var(--text)}
+#rte-ed h2{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;margin:16px 0 8px;color:var(--text)}
+#rte-ed h3{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;margin:14px 0 6px;color:var(--text)}
+#rte-ed p{margin:0 0 10px}
+#rte-ed ul,#rte-ed ol{padding-left:22px;margin:8px 0}
+#rte-ed li{margin-bottom:4px}
+#rte-ed blockquote{border-left:4px solid var(--accent);padding:8px 16px;margin:12px 0;background:var(--accent-f);border-radius:0 var(--r-sm) var(--r-sm) 0;font-style:italic;color:var(--text2)}
+#rte-ed strong{font-weight:700}
+#rte-ed em{font-style:italic}
+#rte-ed u{text-decoration:underline}
+#rte-ed a{color:var(--blue);text-decoration:underline}
+.wc-bar{display:flex;align-items:center;justify-content:space-between;max-width:780px;margin:8px auto 0;font-size:12px;color:var(--text3);padding:0 4px}
+
+/* ─── AI FLOATING CHAT ─── */
+#chat-fab{position:fixed;bottom:28px;right:24px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--gold));color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,.25);z-index:80;transition:all var(--t);border:none}
+#chat-fab:hover{transform:scale(1.08);box-shadow:0 6px 28px rgba(0,0,0,.32)}
+#chat-fab.has-msgs::after{content:'';position:absolute;top:4px;right:4px;width:12px;height:12px;border-radius:50%;background:var(--gold);border:2px solid var(--surface)}
+@media(max-width:768px){#chat-fab{bottom:calc(var(--mob-nav) + 16px);right:16px;width:46px;height:46px;font-size:19px}}
+#chat-panel{position:fixed;bottom:90px;right:24px;width:340px;max-height:520px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-xl);box-shadow:var(--sh-lg);display:flex;flex-direction:column;z-index:79;animation:slideU .22s ease;overflow:hidden;transition:background var(--t)}
+#chat-panel.hidden{display:none}
+@media(max-width:768px){#chat-panel{right:12px;left:12px;width:auto;bottom:calc(var(--mob-nav) + 68px);max-height:60vh}}
+.chat-hd{padding:14px 16px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;flex-shrink:0}
+.chat-hd-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.7);animation:pulse 2s infinite}
+.chat-hd-ti{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;flex:1}
+.chat-hd-cl{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:#fff;transition:background var(--t)}
+.chat-hd-cl:hover{background:rgba(255,255,255,.35)}
+.chat-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.chat-msg{max-width:88%;padding:10px 13px;border-radius:var(--r-md);font-size:13.5px;line-height:1.65;animation:fadeUp .2s ease}
+.chat-msg.user{background:var(--accent);color:#fff;align-self:flex-end;border-radius:var(--r-md) var(--r-md) 4px var(--r-md)}
+.chat-msg.ai{background:var(--surface2);color:var(--text);align-self:flex-start;border-radius:var(--r-md) var(--r-md) var(--r-md) 4px;border:1px solid var(--border)}
+.chat-msg.ai.loading{opacity:.7}
+.chat-typing{display:flex;gap:4px;align-items:center;padding:4px 0}
+.chat-typing span{width:6px;height:6px;border-radius:50%;background:var(--text3);animation:pulse 1s infinite}
+.chat-typing span:nth-child(2){animation-delay:.2s}
+.chat-typing span:nth-child(3){animation-delay:.4s}
+.chat-ft{padding:10px 12px;border-top:1.5px solid var(--border);display:flex;gap:8px;align-items:flex-end;flex-shrink:0}
+#chat-inp{flex:1;border:1.5px solid var(--border);border-radius:var(--r-md);padding:8px 12px;font-size:13.5px;background:var(--surface2);color:var(--text);outline:none;resize:none;min-height:38px;max-height:100px;line-height:1.5;transition:border var(--t)}
+#chat-inp:focus{border-color:var(--accent)}
+#chat-inp::placeholder{color:var(--text3)}
+.chat-send{width:36px;height:36px;border-radius:var(--r-sm);background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all var(--t);border:none;font-size:16px}
+.chat-send:hover{background:var(--accent2);transform:translateY(-1px)}
+.chat-send:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.chat-chips{padding:8px 12px 0;display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0}
+.chat-chip{font-size:11px;padding:4px 10px;border-radius:14px;background:var(--accent-f);color:var(--accent);border:1px solid var(--accent-l);cursor:pointer;transition:all var(--t);white-space:nowrap}
+.chat-chip:hover{background:var(--accent-l)}
+
+/* ─── PDF EXPORT ─── */
+.pdf-badge{display:inline-flex;align-items:center;gap:5px;background:var(--red-l);color:var(--red);border:1px solid rgba(192,57,43,.2);border-radius:6px;padding:4px 10px;font-size:12px;font-weight:600}
+
+/* ─── PRINT OVERRIDE ─── */
+@media print{
+  #sidebar,#mob-nav,#tb,#ws-tb,#ip,#aip,#rte-bar,.tb-act,.oc-acts,button,#chat-fab,#chat-panel,.wc-bar{display:none!important}
+  #app{display:block;height:auto;overflow:visible}
+  #main,#body,.page,.oc{display:block;height:auto;overflow:visible}
+  .dc{border:none;box-shadow:none;max-width:none}
+  #rte-ed{padding:0;min-height:auto}
+  body{background:#fff;color:#000}
+}
+</style>
+</head>
+<body>
+<!-- ─── AUTH SCREEN ─── -->
+<div id="auth-screen" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#FBF8F3,#F2EDE3);font-family:'Lato',system-ui,sans-serif;">
+  <div style="width:100%;max-width:380px;padding:36px 32px;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.12);">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-family:'Playfair Display',serif;font-weight:700;font-size:22px;color:#2E6B50">ScholarFlow AI</div>
+      <div style="font-size:13px;color:#968E82;margin-top:4px">Your academic companion</div>
+    </div>
+    <div id="auth-err" style="display:none;background:#FDECEA;color:#C0392B;font-size:13px;padding:8px 12px;border-radius:8px;margin-bottom:14px"></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <input id="auth-email" type="email" placeholder="you@email.com" autocomplete="email" style="padding:10px 12px;border:1px solid #E8E0D0;border-radius:8px;font-size:14px;outline:none"/>
+      <input id="auth-pass" type="password" placeholder="Password" autocomplete="current-password" style="padding:10px 12px;border:1px solid #E8E0D0;border-radius:8px;font-size:14px;outline:none"/>
+      <button id="auth-submit" onclick="authSubmit()" style="padding:11px;border-radius:8px;background:#2E6B50;color:#fff;font-weight:700;font-size:14px;cursor:pointer;border:none">Log In</button>
+      <button onclick="toggleAuthMode()" style="background:none;border:none;color:#5A5248;font-size:13px;padding:6px;cursor:pointer" id="auth-toggle-btn">Don't have an account? Sign up</button>
+    </div>
+  </div>
+</div>
+<div id="app" class="pre-auth-hidden" data-theme="warm">
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-lm">✦</div>
+    <div class="sb-lt">
+      <div class="sb-ln">ScholarFlow AI</div>
+      <div class="sb-ls">Academic Companion</div>
+    </div>
+  </div>
+  <div class="sb-proj" onclick="openProjMod()">
+    <div class="sb-pl">📂 Active Project</div>
+    <div class="sb-pn" id="sb-pn">Research on Food Security in Nigeria</div>
+    <div class="sb-pm" id="sb-pm">0 / 8 chapters complete</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-sl">Main</div>
+    <div class="ni active" data-nav="workspace" onclick="switchNav('workspace')"><span class="ni-ic">✦</span><span class="ni-lb">Workspace</span></div>
+    <div class="ni" data-nav="practical" onclick="switchNav('practical')"><span class="ni-ic">⚗</span><span class="ni-lb">Practical Reports</span></div>
+    <div class="ni" data-nav="presentations" onclick="switchNav('presentations')"><span class="ni-ic">🎞</span><span class="ni-lb">Presentations</span></div>
+    <div class="sb-sl">Tools</div>
+    <div class="ni" data-nav="references" onclick="switchNav('references')"><span class="ni-ic">🗂</span><span class="ni-lb">References</span></div>
+    <div class="ni" data-nav="logbook" onclick="switchNav('logbook')"><span class="ni-ic">📓</span><span class="ni-lb">Logbook / SIWES</span></div>
+    <div class="ni" data-nav="planner" onclick="switchNav('planner')"><span class="ni-ic">📅</span><span class="ni-lb">Study Planner</span></div>
+    <div class="ni" data-nav="notes" onclick="switchNav('notes')"><span class="ni-ic">🗒</span><span class="ni-lb">Notes</span></div>
+    <div class="ni" data-nav="files" onclick="switchNav('files')"><span class="ni-ic">📁</span><span class="ni-lb">File Library</span></div>
+    <div class="sb-sl">Account</div>
+    <div class="ni" data-nav="settings" onclick="switchNav('settings')"><span class="ni-ic">⚙</span><span class="ni-lb">Settings</span></div>
+  </nav>
+  <div class="sb-bot">
+    <div class="sb-cb" onclick="toggleSB()" id="sb-coll">
+      <span class="ni-ic" id="sb-ci">◀</span>
+      <span class="ni-lb" style="font-size:13px">Collapse sidebar</span>
+    </div>
+  </div>
+</div>
+
+<div id="mob-ov" class="hidden" onclick="closeMobSB()"></div>
+
+<!-- CHAPTER PANEL -->
+<div id="cp">
+  <div class="cp-hd"><div class="cp-ht">📑 Document Chapters</div></div>
+  <div class="cp-ls" id="ch-ls"></div>
+  <div class="cp-pr">
+    <div class="cp-prl"><span>Progress</span><span id="cp-pct" style="color:var(--accent);font-weight:700">0%</span></div>
+    <div class="pb"><div class="pbf" id="pbf" style="width:0%"></div></div>
+    <div style="font-size:11px;color:var(--text3);margin-top:5px" id="cp-cnt">0 of 8 chapters written</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+  <div id="tb">
+    <div class="tb-hbg" onclick="openMobSB()">☰</div>
+    <span class="tb-ic" id="tb-ic">📖</span>
+    <div class="tb-inf">
+      <div class="tb-ti" id="tb-ti">Chapter One — Introduction</div>
+      <div class="tb-su" id="tb-su">Research on Food Security in Nigeria</div>
+    </div>
+    <div class="tb-act">
+      <div class="sv-badge" id="sv-bd">
+        <div class="sv-dot saved" id="sv-dot"></div>
+        <span id="sv-tx">All saved</span>
+      </div>
+      <button class="btn btn-g btn-sm btn-ic" onclick="openEmailMo('backup')" title="Email backup" style="font-size:15px">📧</button>
+      <button class="btn btn-g btn-sm btn-ic" onclick="printCurrent()" title="Print" style="font-size:15px">🖨</button>
+      <button class="btn btn-g btn-sm btn-ic" onclick="openThemePicker()" title="Change theme" style="font-size:15px" id="th-btn">🎨</button>
+    </div>
+  </div>
+
+  <div id="body">
+
+    <!-- WORKSPACE -->
+    <div id="page-workspace" style="display:flex;flex-direction:column;height:100%;overflow:hidden">
+      <div id="ws-tb">
+        <div class="ws-tl">
+          <button class="btn btn-p btn-sm" id="g-btn" onclick="generateChapter()">✦ Generate</button>
+          <button class="btn btn-s btn-sm" onclick="toggleIP()">⚙ Instructions</button>
+        </div>
+        <div class="tdiv"></div>
+        <div class="ws-tr">
+          <button class="btn btn-g btn-sm" onclick="aiAct('grammar')" title="Fix Grammar">✓ Grammar</button>
+          <button class="btn btn-g btn-sm" onclick="aiAct('expand')" title="Expand">↗ Expand</button>
+          <button class="btn btn-g btn-sm" onclick="aiAct('shorten')" title="Shorten">↙ Shorten</button>
+          <button class="btn btn-g btn-sm" onclick="aiAct('tone')" title="Improve Tone">✦ Tone</button>
+          <button class="btn btn-g btn-sm" onclick="aiAct('summarize')" title="Summarize">∑ Sum</button>
+          <div class="tdiv"></div>
+          <button class="btn btn-g btn-sm btn-ic" onclick="cpCh()" title="Copy">⧉</button>
+          <button class="btn btn-g btn-sm btn-ic" onclick="dlCh()" title="Download TXT">⬇</button>
+          <button class="btn btn-g btn-sm btn-ic" onclick="exportChapterPDF()" title="Export PDF" style="color:var(--red)">PDF</button>
+          <button class="btn btn-g btn-sm btn-ic" onclick="openEmailMo('chapter')" title="Email">📧</button>
+          <button class="btn btn-g btn-sm btn-ic" onclick="printCurrent()" title="Print">🖨</button>
+        </div>
+      </div>
+
+      <div id="ip" class="hidden">
+        <div class="ip-hd">⚙ Chapter Settings <span style="font-size:11px;font-weight:400;color:var(--text2)">— customise before generating</span></div>
+        <div class="ip-gr">
+          <div class="field"><label class="lbl">Tone</label><select class="inp" id="ip-tone"><option>Academic / Formal</option><option>Research Journal</option><option>Simplified</option><option>Technical Documentation</option><option>Professional</option></select></div>
+          <div class="field"><label class="lbl">Word Count</label><input type="number" class="inp" id="ip-wc" value="1000" min="200" max="5000" step="100"/></div>
+          <div class="field"><label class="lbl">Writing Mode</label><select class="inp" id="ip-mode"><option>Full Auto</option><option>Assisted</option><option>Manual</option></select></div>
+          <div class="field"><label class="lbl">Key Focus Areas</label><input type="text" class="inp" id="ip-focus" placeholder="e.g. food insecurity in rural Nigeria…"/></div>
+          <div class="field"><label class="lbl">Formatting</label><input type="text" class="inp" id="ip-fmt" placeholder="e.g. FUNAAB format, subsections…"/></div>
+          <div class="field"><label class="lbl">Additional Notes</label><input type="text" class="inp" id="ip-extra" placeholder="e.g. include Nigerian statistics…"/></div>
+        </div>
+        <div class="cit-row">
+          <span style="font-size:12px;color:var(--text2);white-space:nowrap">Citation:</span>
+          <span class="chip chip-sm active" data-cit="APA 7th" onclick="setCit('APA 7th')">APA 7th</span>
+          <span class="chip chip-sm" data-cit="Harvard" onclick="setCit('Harvard')">Harvard</span>
+          <span class="chip chip-sm" data-cit="MLA" onclick="setCit('MLA')">MLA</span>
+          <span class="chip chip-sm" data-cit="Chicago" onclick="setCit('Chicago')">Chicago</span>
+          <span class="chip chip-sm" data-cit="Vancouver" onclick="setCit('Vancouver')">Vancouver</span>
+        </div>
+      </div>
+
+      <div id="ws-lay">
+        <div id="ws-ea">
+          <!-- RICH TEXT TOOLBAR -->
+          <div id="rte-bar">
+            <select class="rte-sel" onchange="rteBlock(this.value);this.value='p'" title="Text style">
+              <option value="p">Paragraph</option>
+              <option value="h1">Heading 1</option>
+              <option value="h2">Heading 2</option>
+              <option value="h3">Heading 3</option>
+              <option value="blockquote">Quote</option>
+            </select>
+            <div class="rte-div"></div>
+            <button class="rte-btn" onclick="rteCmd('bold')" title="Bold (Ctrl+B)"><strong>B</strong></button>
+            <button class="rte-btn" onclick="rteCmd('italic')" title="Italic (Ctrl+I)"><em>I</em></button>
+            <button class="rte-btn" onclick="rteCmd('underline')" title="Underline (Ctrl+U)"><u>U</u></button>
+            <button class="rte-btn" onclick="rteCmd('strikeThrough')" title="Strikethrough"><s>S</s></button>
+            <div class="rte-div"></div>
+            <button class="rte-btn" onclick="rteCmd('insertUnorderedList')" title="Bullet List">≡</button>
+            <button class="rte-btn" onclick="rteCmd('insertOrderedList')" title="Numbered List">1.</button>
+            <button class="rte-btn" onclick="rteCmd('indent')" title="Indent">→</button>
+            <button class="rte-btn" onclick="rteCmd('outdent')" title="Outdent">←</button>
+            <div class="rte-div"></div>
+            <button class="rte-btn" onclick="rteCmd('justifyLeft')" title="Align Left">⬅</button>
+            <button class="rte-btn" onclick="rteCmd('justifyCenter')" title="Center">↔</button>
+            <button class="rte-btn" onclick="rteCmd('justifyRight')" title="Align Right">➡</button>
+            <div class="rte-div"></div>
+            <button class="rte-btn" onclick="rteLink()" title="Insert Link">🔗</button>
+            <button class="rte-btn" onclick="rteCmd('removeFormat')" title="Clear Formatting">✕f</button>
+            <div class="rte-div"></div>
+            <button class="rte-btn" onclick="rteCmd('undo')" title="Undo (Ctrl+Z)">↩</button>
+            <button class="rte-btn" onclick="rteCmd('redo')" title="Redo (Ctrl+Y)">↪</button>
+          </div>
+          <div id="ws-sc">
+            <div class="dc" id="doc-card">
+              <div class="dc-hd">
+                <span class="dc-hi" id="dc-ic">📖</span>
+                <div>
+                  <div class="dc-ht" id="dc-ti">Chapter One — Introduction</div>
+                  <div class="dc-hs" id="dc-hs">Click Generate to create AI content, or start writing below</div>
+                </div>
+              </div>
+              <div class="ee" id="eed">
+                <span class="ee-ic" id="ee-ic">✍️</span>
+                <div class="ee-ti">Ready to write this chapter</div>
+                <div class="ee-su">Set your instructions and click <strong>Generate</strong>, or start typing directly below.</div>
+                <div class="ee-tips"><span class="ee-tip">Set tone above</span><span class="ee-tip">Add focus areas</span><span class="ee-tip">Upload references</span></div>
+                <button class="btn btn-p" onclick="generateChapter()" id="g-btn2">✦ Generate Chapter</button>
+              </div>
+              <div id="rte-ed" contenteditable="true"
+                data-placeholder="Start writing here, or click ✦ Generate to let AI write for you…"
+                class="hidden"
+                oninput="onRteInput()"
+                onkeydown="rteKeydown(event)"></div>
+            </div>
+            <div class="wc-bar hidden" id="wc-el">
+              <span id="wc-num">0 words</span>
+              <span id="wc-chars">0 chars</span>
+            </div>
+          </div>
+        </div>
+        <div id="aip" class="hidden">
+          <div class="aip-hd">
+            <div class="aip-dot"></div>
+            <div class="aip-ti">AI Suggestion</div>
+            <button class="btn btn-g btn-xs" onclick="closeAIP()">✕</button>
+          </div>
+          <div class="aip-bd" id="aip-bd"></div>
+          <div class="aip-ft">
+            <button class="btn btn-p btn-sm f1" onclick="applyAI()">✓ Apply</button>
+            <button class="btn btn-s btn-sm" onclick="closeAIP()">Discard</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRACTICAL -->
+    <div id="page-practical" class="page hidden">
+      <div class="pi">
+        <div class="sec-ti">⚗ Practical Report Generator</div>
+        <div class="sec-su">Lab work, clinical postings, field work, industrial training — enter your details and AI formats them into a professional academic report.</div>
+        <div class="card card-gd mb16" style="border-left:4px solid var(--gold)">
+          <div style="font-size:13px;color:var(--gold);font-weight:700">💡 How it works</div>
+          <div style="font-size:13px;color:var(--text2);margin-top:4px">Fill in as many fields as you have. Leave empty ones blank — AI handles structure and academic language.</div>
+        </div>
+        <div class="g2 mb20">
+          <div class="field"><label class="lbl">Report Title *</label><textarea class="inp" id="pr-ti" placeholder="e.g. Determination of Vitamin C in Citrus Fruits"></textarea></div>
+          <div class="field"><label class="lbl">Objectives / Aim</label><textarea class="inp" id="pr-ob" placeholder="State your aim and specific objectives…"></textarea></div>
+          <div class="field"><label class="lbl">Materials & Equipment</label><textarea class="inp" id="pr-ma" placeholder="List all materials, chemicals, equipment used…"></textarea></div>
+          <div class="field"><label class="lbl">Procedure / Method</label><textarea class="inp" id="pr-pr" placeholder="Describe the experimental steps taken…"></textarea></div>
+          <div class="field"><label class="lbl">Observations</label><textarea class="inp" id="pr-ov" placeholder="What did you observe during the experiment?"></textarea></div>
+          <div class="field"><label class="lbl">Results</label><textarea class="inp" id="pr-rs" placeholder="Quantitative and qualitative results, measurements…"></textarea></div>
+          <div class="field"><label class="lbl">Discussion</label><textarea class="inp" id="pr-dc" placeholder="Interpret your results, relate to theory or literature…"></textarea></div>
+          <div class="field"><label class="lbl">Conclusion</label><textarea class="inp" id="pr-cn" placeholder="Summary of findings, errors, recommendations…"></textarea></div>
+        </div>
+        <button class="btn btn-p" id="pr-bt" onclick="genPractical()">⚗ Generate Practical Report</button>
+        <div id="pr-out" class="hidden oc">
+          <div class="oc-hd">
+            <div class="oc-ti">📄 Generated Report</div>
+            <div class="oc-acts">
+              <button class="btn btn-s btn-sm" onclick="cpEl('pr-ob2')">⧉ Copy</button>
+              <button class="btn btn-s btn-sm" onclick="dlEl('pr-ob2','practical_report.txt')">⬇ TXT</button>
+              <button class="btn btn-s btn-sm" onclick="exportPDF('pr-ob2','Practical Report')" style="color:var(--red)">PDF</button>
+              <button class="btn btn-s btn-sm" onclick="openEmailMo('practical')">📧 Email</button>
+              <button class="btn btn-s btn-sm" onclick="printEl('pr-ob2','Practical Report')">🖨 Print</button>
+            </div>
+          </div>
+          <div class="oc-bd" id="pr-ob2"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRESENTATIONS -->
+    <div id="page-presentations" class="page hidden">
+      <div class="pi">
+        <div class="sec-ti">🎞 Presentation Generator</div>
+        <div class="sec-su">Paste a chapter, essay, or notes — AI converts it into structured slides with speaker notes instantly.</div>
+        <div class="g2 mb16" style="grid-template-columns:2fr 1fr;align-items:start">
+          <div class="field"><label class="lbl">Content to Convert</label><textarea class="inp" id="ps-in" style="min-height:180px" placeholder="Paste your chapter content, essay, or notes here…"></textarea></div>
+          <div>
+            <div class="field"><label class="lbl">Slide Theme</label>
+              <div id="ps-th" style="display:flex;flex-direction:column;gap:6px">
+                <span class="chip active" data-sth="Academic" onclick="setSlideTh('Academic')">🎓 Academic</span>
+                <span class="chip" data-sth="Professional" onclick="setSlideTh('Professional')">💼 Professional</span>
+                <span class="chip" data-sth="Modern" onclick="setSlideTh('Modern')">✨ Modern</span>
+                <span class="chip" data-sth="Minimalist" onclick="setSlideTh('Minimalist')">◻ Minimalist</span>
+                <span class="chip" data-sth="Creative" onclick="setSlideTh('Creative')">🎨 Creative</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-p" id="ps-bt" onclick="genPresentation()">🎞 Generate Slides</button>
+        <div id="ps-out" class="hidden mt24">
+          <div class="flex ic jb mb16 fw g8">
+            <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600" id="ps-cnt"></div>
+            <div class="flex g8 fw">
+              <button class="btn btn-s btn-sm" onclick="cpEl('ps-sl')">⧉ Copy All</button>
+              <button class="btn btn-s btn-sm" onclick="dlEl('ps-sl','presentation.txt')">⬇ TXT</button>
+              <button class="btn btn-s btn-sm" onclick="exportPDF('ps-sl','Presentation Slides')" style="color:var(--red)">PDF</button>
+              <button class="btn btn-s btn-sm" onclick="openEmailMo('presentation')">📧 Email</button>
+              <button class="btn btn-s btn-sm" onclick="printEl('ps-sl','Presentation Slides')">🖨 Print</button>
+            </div>
+          </div>
+          <div class="g2" id="ps-sl"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REFERENCES -->
+    <div id="page-references" class="page hidden">
+      <div class="pi">
+        <div class="sec-ti">🗂 Reference Manager</div>
+        <div class="sec-su">Build your bibliography, manage citations, and export formatted reference lists in any academic style.</div>
+        <div class="flex g8 mb20 fw" id="ref-cits">
+          <span class="chip active" data-rc="APA 7th" onclick="setRefCit('APA 7th')">APA 7th</span>
+          <span class="chip" data-rc="Harvard" onclick="setRefCit('Harvard')">Harvard</span>
+          <span class="chip" data-rc="MLA" onclick="setRefCit('MLA')">MLA</span>
+          <span class="chip" data-rc="Chicago" onclick="setRefCit('Chicago')">Chicago</span>
+          <span class="chip" data-rc="Vancouver" onclick="setRefCit('Vancouver')">Vancouver</span>
+        </div>
+        <div class="card mb20">
+          <div class="card-ti">➕ Add New Reference</div>
+          <div class="g3 mb12">
+            <div class="field"><label class="lbl">Author(s) *</label><input type="text" class="inp" id="rf-au" placeholder="e.g. Adeyemi, O. A."/></div>
+            <div class="field"><label class="lbl">Year</label><input type="text" class="inp" id="rf-yr" placeholder="2023"/></div>
+            <div class="field"><label class="lbl">Title *</label><input type="text" class="inp" id="rf-ti" placeholder="Title of the work"/></div>
+            <div class="field"><label class="lbl">Journal / Publisher</label><input type="text" class="inp" id="rf-sr" placeholder="Journal or publisher name"/></div>
+            <div class="field"><label class="lbl">Volume / Pages</label><input type="text" class="inp" id="rf-vl" placeholder="e.g. 15(3), 234–250"/></div>
+            <div class="field"><label class="lbl">URL / DOI</label><input type="text" class="inp" id="rf-ul" placeholder="https://doi.org/…"/></div>
+          </div>
+          <button class="btn btn-p btn-sm" onclick="addRef()">➕ Add Reference</button>
+        </div>
+        <div class="flex g8 mb12 fw">
+          <input type="text" class="inp f1" id="rf-sch" placeholder="🔍  Search your references…" oninput="renderRefs()"/>
+          <button class="btn btn-s btn-sm" onclick="exportRefs()">⬇ Export List</button>
+          <button class="btn btn-s btn-sm" onclick="openEmailMo('references')">📧 Email Refs</button>
+        </div>
+        <div id="rf-ls"></div>
+      </div>
+    </div>
+
+    <!-- LOGBOOK -->
+    <div id="page-logbook" class="page hidden">
+      <div class="pi">
+        <div class="sec-ti">📓 Logbook & Activity Log</div>
+        <div class="sec-su">SIWES, internship, clinical posting, teaching practice — write your activity and AI formats it into a professional, supervisor-ready log entry.</div>
+        <div class="card mb20">
+          <div class="card-ti">📝 New Log Entry</div>
+          <div class="g2">
+            <div class="field"><label class="lbl">Date</label><input type="date" class="inp" id="lb-dt"/></div>
+            <div class="field"><label class="lbl">Organisation</label><input type="text" class="inp" id="lb-or" placeholder="Company, hospital, school…"/></div>
+            <div class="field"><label class="lbl">Supervisor's Name</label><input type="text" class="inp" id="lb-sp" placeholder="Full name"/></div>
+            <div class="field"><label class="lbl">Department / Unit</label><input type="text" class="inp" id="lb-dp" placeholder="e.g. Nutrition & Dietetics Unit"/></div>
+          </div>
+          <div class="field"><label class="lbl">Activities Carried Out *</label><textarea class="inp" id="lb-ac" style="min-height:100px" placeholder="Describe everything you did today — tasks, procedures, learnings…"></textarea></div>
+          <button class="btn btn-p mt8" id="lb-bt" onclick="genLog()">📓 Generate Log Entry</button>
+        </div>
+        <div id="lb-out" class="hidden oc">
+          <div class="oc-hd">
+            <div class="oc-ti">📋 Formatted Log Entry</div>
+            <div class="oc-acts">
+              <button class="btn btn-s btn-sm" onclick="cpEl('lb-ob2')">⧉ Copy</button>
+              <button class="btn btn-s btn-sm" onclick="dlEl('lb-ob2','log_entry.txt')">⬇ TXT</button>
+              <button class="btn btn-s btn-sm" onclick="exportPDF('lb-ob2','Log Entry')" style="color:var(--red)">PDF</button>
+              <button class="btn btn-s btn-sm" onclick="openEmailMo('logbook')">📧 Email</button>
+              <button class="btn btn-s btn-sm" onclick="printEl('lb-ob2','Logbook Entry')">🖨 Print</button>
+            </div>
+          </div>
+          <div class="oc-bd" id="lb-ob2"></div>
+        </div>
+        <div id="lb-hist" class="mt20"></div>
+      </div>
+    </div>
+
+    <!-- PLANNER -->
+    <div id="page-planner" class="page hidden">
+      <div class="pi-sm">
+        <div class="sec-ti">📅 Study Planner</div>
+        <div class="sec-su">Keep track of deadlines, assignments, exams, and reminders. Stay on top of your schedule.</div>
+        <div class="card mb24">
+          <div class="card-ti">➕ Add Task or Event</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+            <div style="flex:2;min-width:160px" class="field"><label class="lbl">Task</label><input type="text" class="inp" id="pl-ti" placeholder="e.g. Submit Chapter 3 draft"/></div>
+            <div style="flex:1;min-width:130px" class="field"><label class="lbl">Due Date</label><input type="date" class="inp" id="pl-dt"/></div>
+            <div class="field"><label class="lbl">Type</label><select class="inp" id="pl-ty"><option value="deadline">⏰ Deadline</option><option value="assignment">📝 Assignment</option><option value="exam">🎓 Exam</option><option value="reminder">🔔 Reminder</option></select></div>
+            <button class="btn btn-p" onclick="addPlan()" style="flex-shrink:0">Add</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-bottom:16px;flex-wrap:wrap">
+          <button class="btn btn-s btn-sm" onclick="openEmailMo('planner')">📧 Email Schedule</button>
+          <button class="btn btn-s btn-sm" onclick="printEl('pl-ls','Study Planner')">🖨 Print Planner</button>
+        </div>
+        <div id="pl-ls"></div>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div id="page-notes" class="hidden" style="height:100%">
+      <div id="nl-lay">
+        <div id="nl-pan">
+          <div class="nlp-hd">
+            <div style="font-size:13px;font-weight:700;color:var(--text)" id="nl-cnt">Notes</div>
+            <button class="btn btn-p btn-xs" onclick="addNote()">+ New</button>
+          </div>
+          <div class="nlp-ls" id="nl-ls"></div>
+        </div>
+        <div id="ne-ar">
+          <div class="ne-tb" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <input type="text" id="n-ti-i" placeholder="Note title…" oninput="upNoteTitle()" style="flex:1;min-width:120px;border:none;outline:none;font-family:'Playfair Display',serif;font-size:18px;font-weight:700;background:transparent;color:var(--text)"/>
+            <div class="flex g6">
+              <button class="btn btn-s btn-xs" onclick="dlNote()">⬇ Download</button>
+              <button class="btn btn-s btn-xs" onclick="openEmailMo('note')">📧 Email</button>
+              <button class="btn btn-s btn-xs" onclick="printNote()">🖨 Print</button>
+            </div>
+          </div>
+          <div class="ne-bd"><textarea id="n-ct-i" placeholder="Start writing your note here…" oninput="upNoteContent()"></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILES -->
+    <div id="page-files" class="page hidden">
+      <div class="pi">
+        <div class="sec-ti">📁 File Library</div>
+        <div class="sec-su">Upload PDFs, journal articles, lecture notes, images, and Word documents. AI uses them as knowledge context when generating your chapters.</div>
+        <div class="uz" onclick="document.getElementById('fi-inp').click()">
+          <span class="uz-ic">📂</span>
+          <div class="uz-ti">Drop files here or click to upload</div>
+          <div class="uz-su">Supports PDF, DOCX, PPTX, TXT, PNG, JPG and more</div>
+          <input type="file" id="fi-inp" multiple accept=".pdf,.docx,.pptx,.txt,.png,.jpg,.jpeg,.xlsx,.csv" style="display:none" onchange="handleFiles(event)"/>
+        </div>
+        <div class="ga" id="fg"></div>
+        <div id="fe" class="es"><span class="es-ic">📭</span><div class="es-tx">No files uploaded yet.<br>Upload your study materials — AI will reference them when writing your chapters.</div></div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="page-settings" class="page hidden">
+      <div class="pi-sm">
+        <div class="sec-ti">⚙ Settings</div>
+        <div class="sec-su">Personalise your ScholarFlow AI experience.</div>
+
+        <div class="card mb16">
+          <div class="card-ti">👤 Account</div>
+          <div class="sr">
+            <div><div class="sr-lb">Signed in as</div><div class="sr-dc" id="acct-email">—</div></div>
+            <button class="btn btn-d btn-sm" onclick="logout()">Log Out</button>
+          </div>
+          <div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.6">☁️ Your projects, notes, and settings sync automatically to your account.</div>
+        </div>
+
+        <div class="card mb16">
+          <div class="card-ti">🎨 Appearance & Theme</div>
+          <div class="sr">
+            <div><div class="sr-lb">App Theme</div><div class="sr-dc">Choose a colour scheme that suits you</div></div>
+            <div class="th-sw">
+              <div class="th-opt active" id="th-warm" onclick="setTheme('warm')">
+                <div class="th-circle" style="background:linear-gradient(135deg,#FBF8F3,#2E6B50)"></div>
+                <span class="th-lbl">Warm</span>
+              </div>
+              <div class="th-opt" id="th-dark" onclick="setTheme('dark')">
+                <div class="th-circle" style="background:linear-gradient(135deg,#131110,#4AA870)"></div>
+                <span class="th-lbl">Dark</span>
+              </div>
+              <div class="th-opt" id="th-sage" onclick="setTheme('sage')">
+                <div class="th-circle" style="background:linear-gradient(135deg,#F4F7F4,#3A7A4A)"></div>
+                <span class="th-lbl">Sage</span>
+              </div>
+              <div class="th-opt" id="th-sunset" onclick="setTheme('sunset')">
+                <div class="th-circle" style="background:linear-gradient(135deg,#FDF6EE,#B05020)"></div>
+                <span class="th-lbl">Sunset</span>
+              </div>
+              <div class="th-opt" id="th-ocean" onclick="setTheme('ocean')">
+                <div class="th-circle" style="background:linear-gradient(135deg,#F0F6FB,#1060A0)"></div>
+                <span class="th-lbl">Ocean</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card mb16">
+          <div class="card-ti">✍ Writing Defaults</div>
+          <div class="sr"><div><div class="sr-lb">Default Citation Style</div></div><select class="inp" style="width:160px" id="s-ci" onchange="S.citationStyle=this.value;persist()"><option>APA 7th</option><option>Harvard</option><option>MLA</option><option>Chicago</option><option>Vancouver</option></select></div>
+          <div class="sr"><div><div class="sr-lb">Default Tone</div></div><select class="inp" style="width:200px" id="s-to" onchange="S.defaultTone=this.value;persist()"><option>Academic / Formal</option><option>Research Journal</option><option>Simplified</option><option>Technical Documentation</option><option>Professional</option></select></div>
+          <div class="sr"><div><div class="sr-lb">Default Writing Mode</div></div><select class="inp" style="width:160px" onchange="S.writingMode=this.value;persist()"><option>Full Auto</option><option>Assisted</option><option>Manual</option></select></div>
+          <div class="sr"><div><div class="sr-lb">Default Word Count</div></div><input type="number" class="inp" style="width:110px" value="1000" min="200" max="5000" step="100" onchange="S.defaultWords=+this.value;persist()"/></div>
+        </div>
+
+        <div class="card mb16">
+          <div class="card-ti">📧 Email Backup</div>
+          <div class="sr">
+            <div><div class="sr-lb">Your Email Address</div><div class="sr-dc">Used for sending backups and exports</div></div>
+            <div class="flex g8 fw"><input type="email" class="inp" style="width:220px" id="user-email" placeholder="you@email.com" oninput="S.userEmail=this.value;persist()"/></div>
+          </div>
+          <div class="sr">
+            <div><div class="sr-lb">Full Data Backup</div><div class="sr-dc">Email all your projects, notes, references and logbook entries</div></div>
+            <button class="btn btn-gold btn-sm" onclick="openEmailMo('backup')">📧 Send Backup Now</button>
+          </div>
+        </div>
+
+        <div class="card mb16">
+          <div class="card-ti">🔑 API Configuration</div>
+          <div class="sr">
+            <div><div class="sr-lb">Anthropic API Key</div><div class="sr-dc">Required to use AI features</div></div>
+            <div class="flex g8 ic fw"><input type="password" class="inp" style="width:220px" id="api-ki" placeholder="sk-ant-…"/><button class="btn btn-p btn-sm" onclick="saveKey()">Save</button></div>
+          </div>
+          <div style="font-size:12px;color:var(--text3);margin-top:8px;line-height:1.6">🔒 Stored in your account, tied to your login. Only used to call Anthropic's API on your behalf.</div>
+        </div>
+
+        <div class="card mb16">
+          <div class="card-ti">💾 Data Management</div>
+          <div class="sr">
+            <div><div class="sr-lb">Export All Data</div><div class="sr-dc">Download a complete backup of all your work</div></div>
+            <button class="btn btn-s btn-sm" onclick="exportAllData()">⬇ Export JSON</button>
+          </div>
+          <div class="sr">
+            <div><div class="sr-lb">Import Data</div><div class="sr-dc">Restore from a previous backup file</div></div>
+            <label class="btn btn-s btn-sm" style="cursor:pointer">📂 Import<input type="file" accept=".json" style="display:none" onchange="importData(event)"/></label>
+          </div>
+          <div class="sr">
+            <div><div class="sr-lb">Clear All Data</div><div class="sr-dc">Permanently delete all stored data</div></div>
+            <button class="btn btn-d btn-sm" onclick="clearData()">🗑 Clear Data</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-ti">ℹ About ScholarFlow AI</div>
+          <div style="font-size:14px;color:var(--text2);line-height:1.8">An intelligent academic workspace for university students. Supports chapter-based writing, practical reports, logbooks, presentations, references, and study planning — powered by Claude AI.<br><br><span class="tag tg">Version 2.0</span>&nbsp;<span class="tag td">Claude-Powered</span></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- PROJECT MODAL -->
+<div class="mo hidden" id="pm">
+  <div class="md">
+    <div class="md-ti">📂 Your Projects</div>
+    <div id="pm-ls"></div>
+    <div style="border-top:1.5px solid var(--border);padding-top:16px;margin-top:6px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:10px">Create New Project</div>
+      <div class="flex g8"><input type="text" class="inp f1" id="np-inp" placeholder="e.g. Thesis on Malnutrition in Nigeria…"/><button class="btn btn-p" onclick="createProj()">Create</button></div>
+    </div>
+    <button class="btn btn-g wf" onclick="closeProjMod()" style="margin-top:14px">Close</button>
+  </div>
+</div>
+
+<!-- THEME PICKER MODAL -->
+<div class="mo hidden" id="theme-mo">
+  <div class="md" style="max-width:360px">
+    <div class="md-ti">🎨 Choose Theme</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+      <div class="po" onclick="setTheme('warm');closeThemePicker()" style="flex-direction:column;align-items:flex-start;gap:8px">
+        <div style="width:100%;height:36px;border-radius:8px;background:linear-gradient(135deg,#FBF8F3 40%,#2E6B50)"></div>
+        <div style="font-size:13px;font-weight:600">🌿 Warm Forest</div>
+        <div style="font-size:11px;color:var(--text3)">Soft cream & forest green</div>
+      </div>
+      <div class="po" onclick="setTheme('dark');closeThemePicker()" style="flex-direction:column;align-items:flex-start;gap:8px">
+        <div style="width:100%;height:36px;border-radius:8px;background:linear-gradient(135deg,#131110 40%,#4AA870)"></div>
+        <div style="font-size:13px;font-weight:600">🌙 Dark Mode</div>
+        <div style="font-size:11px;color:var(--text3)">Dark charcoal & emerald</div>
+      </div>
+      <div class="po" onclick="setTheme('sage');closeThemePicker()" style="flex-direction:column;align-items:flex-start;gap:8px">
+        <div style="width:100%;height:36px;border-radius:8px;background:linear-gradient(135deg,#F4F7F4 40%,#3A7A4A)"></div>
+        <div style="font-size:13px;font-weight:600">🌱 Sage Garden</div>
+        <div style="font-size:11px;color:var(--text3)">Mint & botanical green</div>
+      </div>
+      <div class="po" onclick="setTheme('sunset');closeThemePicker()" style="flex-direction:column;align-items:flex-start;gap:8px">
+        <div style="width:100%;height:36px;border-radius:8px;background:linear-gradient(135deg,#FDF6EE 40%,#B05020)"></div>
+        <div style="font-size:13px;font-weight:600">🌅 Sunset Warm</div>
+        <div style="font-size:11px;color:var(--text3)">Amber & burnt orange</div>
+      </div>
+      <div class="po" onclick="setTheme('ocean');closeThemePicker()" style="flex-direction:column;align-items:flex-start;gap:8px">
+        <div style="width:100%;height:36px;border-radius:8px;background:linear-gradient(135deg,#F0F6FB 40%,#1060A0)"></div>
+        <div style="font-size:13px;font-weight:600">🌊 Ocean Blue</div>
+        <div style="font-size:11px;color:var(--text3)">Clear sky & deep blue</div>
+      </div>
+    </div>
+    <button class="btn btn-g wf" onclick="closeThemePicker()">Close</button>
+  </div>
+</div>
+
+<!-- EMAIL MODAL -->
+<div id="email-mo" class="hidden">
+  <div class="email-md">
+    <div class="md-ti">📧 Send by Email</div>
+    <div class="field">
+      <label class="lbl">Recipient Email</label>
+      <input type="email" class="inp" id="em-to" placeholder="you@email.com"/>
+    </div>
+    <div class="field">
+      <label class="lbl">Subject</label>
+      <input type="text" class="inp" id="em-subj" value="ScholarFlow AI Export"/>
+    </div>
+    <div class="field">
+      <label class="lbl">Message (optional)</label>
+      <textarea class="inp" id="em-msg" style="min-height:70px" placeholder="Add a note…"></textarea>
+    </div>
+    <div id="em-preview" style="background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-sm);padding:12px;margin-bottom:16px;max-height:150px;overflow-y:auto;font-size:13px;color:var(--text2);white-space:pre-wrap;display:none"></div>
+    <div style="font-size:12px;color:var(--text3);margin-bottom:16px;line-height:1.6">📌 This will open your email client with the content pre-filled. Your data stays private — nothing is sent to external servers.</div>
+    <div class="flex g8 fw">
+      <button class="btn btn-p f1" onclick="sendEmail()">📧 Open Email Client</button>
+      <button class="btn btn-s" onclick="closeEmailMo()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING AI CHAT -->
+<button id="chat-fab" onclick="toggleChat()" title="AI Study Assistant">💬</button>
+
+<div id="chat-panel" class="hidden">
+  <div class="chat-hd">
+    <div class="chat-hd-dot"></div>
+    <div class="chat-hd-ti">AI Study Assistant</div>
+    <div class="chat-hd-cl" onclick="clearChat()" title="Clear chat">🗑</div>
+    <div class="chat-hd-cl" onclick="toggleChat()">✕</div>
+  </div>
+  <div class="chat-chips" id="chat-chips">
+    <span class="chat-chip" onclick="chatQuick('Explain this concept simply')">Explain simply</span>
+    <span class="chat-chip" onclick="chatQuick('Give me 3 key points on this topic')">Key points</span>
+    <span class="chat-chip" onclick="chatQuick('What is the APA 7th citation format for a journal article?')">APA citation</span>
+    <span class="chat-chip" onclick="chatQuick('Help me write a strong thesis statement')">Thesis help</span>
+    <span class="chat-chip" onclick="chatQuick('What are common academic writing mistakes to avoid?')">Writing tips</span>
+  </div>
+  <div class="chat-msgs" id="chat-msgs">
+    <div class="chat-msg ai">👋 Hi! I'm your AI study assistant. Ask me anything — concepts, citations, writing tips, research help, or paste text for me to review!</div>
+  </div>
+  <div class="chat-ft">
+    <textarea id="chat-inp" placeholder="Ask anything academic…" rows="1"
+      onkeydown="chatKeydown(event)" oninput="autoResizeChatInp(this)"></textarea>
+    <button class="chat-send" id="chat-send" onclick="sendChat()">➤</button>
+  </div>
+</div>
+
+<!-- MOBILE NAV -->
+<div id="mob-nav">
+  <div style="display:flex;align-items:stretch;min-width:max-content;width:100%;height:100%">
+    <div class="mni active" data-mn="workspace" onclick="switchNav('workspace')"><span class="mni-ic">✦</span>Write</div>
+    <div class="mni" data-mn="practical" onclick="switchNav('practical')"><span class="mni-ic">⚗</span>Report</div>
+    <div class="mni" data-mn="presentations" onclick="switchNav('presentations')"><span class="mni-ic">🎞</span>Slides</div>
+    <div class="mni" data-mn="references" onclick="switchNav('references')"><span class="mni-ic">🗂</span>Refs</div>
+    <div class="mni" data-mn="logbook" onclick="switchNav('logbook')"><span class="mni-ic">📓</span>Log</div>
+    <div class="mni" data-mn="planner" onclick="switchNav('planner')"><span class="mni-ic">📅</span>Plan</div>
+    <div class="mni" data-mn="notes" onclick="switchNav('notes')"><span class="mni-ic">🗒</span>Notes</div>
+    <div class="mni" data-mn="files" onclick="switchNav('files')"><span class="mni-ic">📁</span>Files</div>
+    <div class="mni" data-mn="settings" onclick="switchNav('settings')"><span class="mni-ic">⚙</span>Settings</div>
+  </div>
+</div>
+
+<div id="toast" class="hidden t-ok"></div>
+
+<script>
+const $=id=>document.getElementById(id),$$=s=>document.querySelectorAll(s);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const ts=()=>new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+const todayD=()=>new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+const CHS=[
+  {id:'ch1',lb:'Chapter One',sb:'Introduction',ic:'📖'},
+  {id:'ch2',lb:'Chapter Two',sb:'Literature Review',ic:'📚'},
+  {id:'ch3',lb:'Chapter Three',sb:'Methodology',ic:'🔬'},
+  {id:'ch4',lb:'Chapter Four',sb:'Results & Data Analysis',ic:'📊'},
+  {id:'ch5',lb:'Chapter Five',sb:'Discussion',ic:'💬'},
+  {id:'conclusion',lb:'Conclusion',sb:'',ic:'✅'},
+  {id:'references',lb:'References',sb:'',ic:'🗂'},
+  {id:'appendices',lb:'Appendices',sb:'',ic:'📎'},
+];
+const PAGES=['workspace','practical','presentations','references','logbook','planner','notes','files','settings'];
+const THEMES=['warm','dark','sage','sunset','ocean'];
+
+let S={
+  theme:'warm',activeNav:'workspace',activeCh:'ch1',activePrj:'p1',
+  projects:[{id:'p1',title:'Research on Food Security in Nigeria',created:'Jun 2025'}],
+  chCnt:{},citationStyle:'APA 7th',writingMode:'Full Auto',
+  defaultTone:'Academic / Formal',defaultWords:1000,
+  files:[],refs:[],userEmail:'',apiKey:'',
+  planItems:[
+    {id:uid(),title:'Submit Chapter 1 Draft',date:'2025-06-15',type:'deadline',done:false},
+    {id:uid(),title:'Literature Review',date:'2025-06-20',type:'assignment',done:false},
+    {id:uid(),title:'Final Submission',date:'2025-07-05',type:'exam',done:false},
+  ],
+  notes:[{id:uid(),title:'Quick Note',content:'Start research on Chapter 2 sources.',updated:ts()}],
+  activeNote:null,logEntries:[],aiResp:'',slideTh:'Academic',
+  savedOutputs:{practical:'',logbook:'',presentation:'',refs:''},
+  chatHistory:[],
+};
+const DEFAULT_S=JSON.parse(JSON.stringify(S));
+
+/* ─── SUPABASE (auth + cloud sync) ─── */
+// TODO: replace with your own Supabase project's URL and public anon key (Project Settings → API).
+const SUPABASE_URL='https://crixqxekantbtwteodgl.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNyaXhxeGVrYW50YnR3dGVvZGdsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MDYwNTYsImV4cCI6MjA5ODk4MjA1Nn0.jwhmZSJykQoCIR9_1bmX6Gwr8_X4G4cU79Ca_nyN1nI';
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+let _authMode='login',_currentUser=null,_cloudLoaded=false;
+
+function persist(){
+  try{localStorage.setItem('sf3_s',JSON.stringify(S));}catch(e){}
+  cloudSaveDebounced();
+}
+let _cloudSaveT;
+function cloudSaveDebounced(){
+  if(!_currentUser||!_cloudLoaded)return;
+  clearTimeout(_cloudSaveT);
+  _cloudSaveT=setTimeout(cloudSave,1500);
+}
+async function cloudSave(){
+  if(!_currentUser)return;
+  try{
+    await sb.from('user_data').upsert({user_id:_currentUser.id,state:S,api_key:S.apiKey||'',updated_at:new Date().toISOString()});
+  }catch(e){console.error('Cloud save failed:',e);}
+}
+async function cloudLoad(){
+  const {data,error}=await sb.from('user_data').select('state,api_key').eq('user_id',_currentUser.id).maybeSingle();
+  if(error){console.error('Cloud load failed:',error);return;}
+  if(data&&data.state){
+    Object.assign(S,DEFAULT_S,data.state);
+    if(data.api_key)S.apiKey=data.api_key;
+  }else{
+    // first login — seed cloud row with local/default state
+    await sb.from('user_data').upsert({user_id:_currentUser.id,state:S,api_key:S.apiKey||'',updated_at:new Date().toISOString()});
+  }
+  _cloudLoaded=true;
+}
+
+/* ─── AUTH ─── */
+function showAuthErr(msg){const el=$('auth-err');el.textContent=msg;el.style.display='block';}
+function hideAuthErr(){$('auth-err').style.display='none';}
+function toggleAuthMode(){
+  _authMode=_authMode==='login'?'signup':'login';
+  $('auth-submit').textContent=_authMode==='login'?'Log In':'Sign Up';
+  $('auth-toggle-btn').textContent=_authMode==='login'?"Don't have an account? Sign up":'Already have an account? Log in';
+  hideAuthErr();
+}
+async function authSubmit(){
+  hideAuthErr();
+  const email=$('auth-email').value.trim(),pass=$('auth-pass').value;
+  if(!email||!pass){showAuthErr('Please enter your email and password.');return}
+  if(pass.length<6){showAuthErr('Password must be at least 6 characters.');return}
+  const btn=$('auth-submit');btn.disabled=true;btn.textContent='Please wait…';
+  try{
+    let result;
+    if(_authMode==='signup'){
+      result=await sb.auth.signUp({email,password:pass});
+      if(result.error)throw result.error;
+      if(!result.data.session){
+        showAuthErr('Account created — check your email to confirm, then log in.');
+        toggleAuthMode();btn.disabled=false;btn.textContent='Log In';return;
+      }
+    }else{
+      result=await sb.auth.signInWithPassword({email,password:pass});
+      if(result.error)throw result.error;
+    }
+    _currentUser=result.data.user;
+    await onAuthed();
+  }catch(e){showAuthErr(e.message||'Something went wrong.');btn.disabled=false;btn.textContent=_authMode==='login'?'Log In':'Sign Up';}
+}
+async function onAuthed(){
+  await cloudLoad();
+  $('auth-screen').style.display='none';
+  $('app').classList.remove('pre-auth-hidden');
+  init();
+}
+async function logout(){
+  await sb.auth.signOut();
+  location.reload();
+}
+async function checkExistingSession(){
+  const {data}=await sb.auth.getSession();
+  if(data.session){
+    _currentUser=data.session.user;
+    await onAuthed();
+  }
+}
+
+
+/* ─── CLAUDE API (via serverless proxy — keeps CORS happy, key never touches the browser network tab as a direct third-party call) ─── */
+async function callClaude(msgs,sys='',max=1500){
+  const key=S.apiKey||'';
+  if(!key){throw new Error('Missing api_key — please add your API key in Settings.');}
+  const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    apiKey:key,model:'claude-sonnet-5',max_tokens:max,
+    system:sys||'You are ScholarFlow AI, an expert academic writing assistant for university students in Nigeria.',
+    messages:msgs
+  })});
+  const d=await r.json();
+  if(d.error)throw new Error(d.error.message||d.error||'Request failed');
+  return d.content?.[0]?.text||'';
+}
+
+/* ─── TOAST ─── */
+let _tt;
+function toast(msg,type='ok'){
+  const el=$('toast');el.className='t-'+type;
+  el.innerHTML=(type==='er'?'⚠ ':type==='in'?'ℹ ':'✓ ')+msg;
+  el.classList.remove('hidden');clearTimeout(_tt);
+  _tt=setTimeout(()=>el.classList.add('hidden'),3400);
+}
+
+/* ─── THEME ─── */
+function setTheme(m){
+  S.theme=m;$('app').setAttribute('data-theme',m);
+  THEMES.forEach(t=>{const el=$('th-'+t);if(el)el.classList.toggle('active',t===m);});
+  persist();
+}
+function openThemePicker(){$('theme-mo').classList.remove('hidden')}
+function closeThemePicker(){$('theme-mo').classList.add('hidden')}
+
+/* ─── SIDEBAR ─── */
+let _sbO=true;
+function toggleSB(){_sbO=!_sbO;$('sidebar').classList.toggle('collapsed',!_sbO);$('sb-ci').textContent=_sbO?'◀':'▶';}
+function openMobSB(){$('sidebar').classList.add('mob-open');$('mob-ov').classList.remove('hidden')}
+function closeMobSB(){$('sidebar').classList.remove('mob-open');$('mob-ov').classList.add('hidden')}
+
+/* ─── NAV ─── */
+function switchNav(nav){
+  S.activeNav=nav;
+  $$('.ni').forEach(el=>el.classList.toggle('active',el.dataset.nav===nav));
+  $$('.mni').forEach(el=>el.classList.toggle('active',el.dataset.mn===nav));
+  PAGES.forEach(p=>{const el=$('page-'+p);if(el)el.classList.toggle('hidden',p!==nav)});
+  $('cp').classList.toggle('hidden',nav!=='workspace');
+  const NI={workspace:null,practical:'⚗',presentations:'🎞',references:'🗂',logbook:'📓',planner:'📅',notes:'🗒',files:'📁',settings:'⚙'};
+  const NL={workspace:null,practical:'Practical Reports',presentations:'Presentation Generator',references:'Reference Manager',logbook:'Logbook & Activity Log',planner:'Study Planner',notes:'Notes',files:'File Library',settings:'Settings'};
+  if(nav!=='workspace'){
+    $('tb-ic').textContent=NI[nav]||'';$('tb-ti').textContent=NL[nav]||'';
+    $('tb-su').textContent='';$('sv-bd').classList.add('hidden');
+  }else{$('sv-bd').classList.remove('hidden');updateTB();}
+  if(nav==='notes')renderNotes();
+  if(nav==='planner')renderPlan();
+  if(nav==='references')renderRefs();
+  if(nav==='files')renderFiles();
+  closeMobSB();
+}
+
+/* ─── PROJECT ─── */
+function key(c){return S.activePrj+'-'+c}
+function activeProj(){return S.projects.find(p=>p.id===S.activePrj)||S.projects[0]}
+function activeCh(){return CHS.find(c=>c.id===S.activeCh)}
+function renderCP(){
+  const done=CHS.filter(c=>!!S.chCnt[key(c.id)]).length;
+  $('ch-ls').innerHTML=CHS.map(ch=>{
+    const has=!!S.chCnt[key(ch.id)],act=S.activeCh===ch.id;
+    return`<div class="chi${act?' active':''}" onclick="switchCh('${ch.id}')"><span class="chi-ic">${ch.ic}</span><div class="chi-in"><div class="chi-nm">${ch.lb}</div>${ch.sb?`<div class="chi-sb">${ch.sb}</div>`:''}</div>${has?'<div class="chi-dot"></div>':''}</div>`;
+  }).join('');
+  const pct=Math.round(done/CHS.length*100);
+  $('pbf').style.width=pct+'%';$('cp-pct').textContent=pct+'%';$('cp-cnt').textContent=done+' of '+CHS.length+' chapters written';
+  const p=activeProj();$('sb-pn').textContent=p.title;$('sb-pm').textContent=done+' / '+CHS.length+' chapters complete';
+}
+function switchCh(id){S.activeCh=id;renderCP();updateTB();loadEd();persist()}
+function updateTB(){
+  const ch=activeCh();
+  $('tb-ic').textContent=ch?.ic||'';$('tb-ti').textContent=ch?(ch.lb+(ch.sb?' — '+ch.sb:'')):'' ;
+  $('tb-su').textContent=activeProj().title;
+  $('dc-ic').textContent=ch?.ic||'';$('dc-ti').textContent=ch?(ch.lb+(ch.sb?' — '+ch.sb:'')):'' ;
+}
+
+/* ─── RICH TEXT EDITOR ─── */
+function getRTE(){return $('rte-ed')}
+function rteGetText(){return getRTE().innerText||''}
+function rteGetHTML(){return getRTE().innerHTML||''}
+function rteSetHTML(html){
+  const ed=getRTE();
+  ed.innerHTML=html;
+  ed.classList.remove('hidden');$('eed').classList.add('hidden');$('wc-el').classList.remove('hidden');
+  updWC();
+}
+function rteCmd(cmd,val=null){
+  getRTE().focus();document.execCommand(cmd,false,val);onRteInput();
+}
+function rteBlock(tag){
+  getRTE().focus();document.execCommand('formatBlock',false,tag);onRteInput();
+}
+function rteLink(){
+  const url=prompt('Enter URL:');if(!url)return;
+  rteCmd('createLink',url.startsWith('http')?url:'https://'+url);
+}
+function rteKeydown(e){
+  if((e.ctrlKey||e.metaKey)){
+    if(e.key==='b'){e.preventDefault();rteCmd('bold')}
+    if(e.key==='i'){e.preventDefault();rteCmd('italic')}
+    if(e.key==='u'){e.preventDefault();rteCmd('underline')}
+  }
+}
+function onRteInput(){
+  S.chCnt[key(S.activeCh)]=rteGetHTML();
+  updWC();renderCP();trigSave();
+}
+function updWC(){
+  const txt=rteGetText();
+  const words=txt.split(/\s+/).filter(Boolean).length;
+  const chars=txt.length;
+  const wcel=$('wc-el'),wn=$('wc-num'),wc=$('wc-chars');
+  if(wcel)wcel.classList.remove('hidden');
+  if(wn)wn.textContent=words.toLocaleString()+' words';
+  if(wc)wc.textContent=chars.toLocaleString()+' chars';
+}
+
+function loadEd(){
+  const cnt=S.chCnt[key(S.activeCh)]||'';
+  const ed=getRTE(),ee=$('eed'),wc=$('wc-el');
+  if(cnt){
+    ed.innerHTML=cnt;
+    ed.classList.remove('hidden');ee.classList.add('hidden');
+    if(wc)wc.classList.remove('hidden');updWC();
+  }else{
+    const ch=activeCh();
+    ed.innerHTML='';ed.classList.add('hidden');ee.classList.remove('hidden');
+    if(wc)wc.classList.add('hidden');
+    $('ee-ic').textContent=ch?.ic||'✍️';
+  }
+  $('aip').classList.add('hidden');
+}
+
+/* ─── SAVE / AUTOSAVE ─── */
+let _sv;
+function trigSave(){
+  $('sv-dot').className='sv-dot saving';$('sv-tx').textContent='Saving…';
+  clearTimeout(_sv);_sv=setTimeout(()=>{persist();$('sv-dot').className='sv-dot saved';$('sv-tx').textContent='Saved '+ts();},1200);
+}
+
+/* ─── PROJECT MODAL ─── */
+function openProjMod(){renderPM();$('pm').classList.remove('hidden')}
+function closeProjMod(){$('pm').classList.add('hidden')}
+function renderPM(){
+  $('pm-ls').innerHTML=S.projects.map(p=>{
+    const done=CHS.filter(c=>!!S.chCnt[`${p.id}-${c.id}`]).length;
+    return`<div class="po${p.id===S.activePrj?' active':''}" onclick="selProj('${p.id}')"><div class="po-ic">✦</div><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:var(--text)">${esc(p.title)}</div><div style="font-size:12px;color:var(--text3)">${p.created} · ${done}/${CHS.length} chapters</div></div>${p.id===S.activePrj?'<span style="color:var(--accent);font-size:18px">✓</span>':''}</div>`;
+  }).join('');
+}
+function selProj(id){S.activePrj=id;S.activeCh='ch1';renderCP();updateTB();loadEd();closeProjMod();persist();toast('Project switched!')}
+function createProj(){
+  const ti=$('np-inp').value.trim();if(!ti){toast('Please enter a project title','er');return}
+  const p={id:uid(),title:ti,created:new Date().toLocaleDateString('en-US',{month:'short',year:'numeric'})};
+  S.projects.push(p);$('np-inp').value='';selProj(p.id);closeProjMod();toast('Project created! 🎉');
+}
+
+/* ─── GENERATE CHAPTER ─── */
+async function generateChapter(){
+  const ch=activeCh(),proj=activeProj();
+  const tone=$('ip-tone')?.value||S.defaultTone;const wds=$('ip-wc')?.value||S.defaultWords;
+  const mode=$('ip-mode')?.value||S.writingMode;const focus=$('ip-focus')?.value||'';
+  const fmt=$('ip-fmt')?.value||'';const extra=$('ip-extra')?.value||'';
+  const fCtx=S.files.length?'\nUploaded files: '+S.files.map(f=>f.name).join(', '):'';
+  const rCtx=S.refs.length?'\nReferences: '+S.refs.slice(0,5).map(r=>`${r.au} (${r.yr}). ${r.ti}. ${r.sr||''}`).join(' | '):'';
+  const bts=[$('g-btn'),$('g-btn2')];bts.forEach(b=>b&&setLd(b,true,'⟳ Generating…'));
+  try{
+    const msg=`Write ${ch.lb}${ch.sb?': '+ch.sb:''} for academic project: "${proj.title}".
+Requirements: Tone: ${tone} | Length: ~${wds} words | Focus: ${focus||'appropriate content'} | Formatting: ${fmt||'numbered sections, clear headings'} | Extra: ${extra||'none'} | Citation: ${S.citationStyle} | Mode: ${mode}${fCtx}${rCtx}
+Return clean HTML using only: <h1><h2><h3><p><ul><ol><li><strong><em><blockquote> tags. No html/body/head wrapper. No inline styles. Be thorough, scholarly, and well-structured.`;
+    const r=await callClaude([{role:'user',content:msg}],'You are ScholarFlow AI — an expert academic writing assistant. Produce well-structured scholarly HTML content.',2000);
+    // strip any accidental wrappers
+    const clean=r.replace(/```html|```/g,'').trim();
+    S.chCnt[key(S.activeCh)]=clean;rteSetHTML(clean);renderCP();trigSave();toast('Chapter generated! ✨');
+  }catch(e){toast(e.message.includes('401')||e.message.includes('api_key')?'Add your API key in Settings ⚙ first':'Error: '+e.message,'er');}
+  bts.forEach(b=>b&&setLd(b,false,b.id==='g-btn'?'✦ Generate':'✦ Generate Chapter'));
+}
+
+/* ─── AI ACTIONS ON EDITOR ─── */
+async function aiAct(action){
+  const cnt=rteGetText();
+  if(!cnt.trim()){toast('No content to improve yet.','er');return}
+  const p=$('aip'),b=$('aip-bd');p.classList.remove('hidden');
+  b.innerHTML='<div style="display:flex;justify-content:center;padding:40px"><svg width="26" height="26" viewBox="0 0 24 24" style="animation:spin .8s linear infinite"><circle cx="12" cy="12" r="10" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="31" stroke-dashoffset="10" stroke-linecap="round"/></svg></div>';
+  const sn=cnt.slice(0,900);
+  const pm={
+    grammar:`Fix all grammar, spelling, punctuation errors in this academic text. Return ONLY the corrected text (no HTML):\n\n${sn}`,
+    expand:`Expand this academic content with more depth, evidence, and scholarly discussion. Return ONLY expanded text:\n\n${sn}`,
+    shorten:`Shorten this academic content while preserving key arguments. Return ONLY the concise version:\n\n${sn}`,
+    tone:`Elevate the academic tone — more formal, scholarly, precise. Return ONLY improved text:\n\n${sn}`,
+    summarize:`Write a 4-5 sentence academic summary of the key points:\n\n${sn}`,
+  };
+  try{const r=await callClaude([{role:'user',content:pm[action]}],'',1000);S.aiResp=r;b.textContent=r;}
+  catch(e){b.textContent='Error: '+e.message}
+}
+function applyAI(){
+  if(!S.aiResp)return;
+  const html=S.aiResp.replace(/\n{2,}/g,'</p><p>').replace(/\n/g,'<br>');
+  rteSetHTML('<p>'+html+'</p>');
+  S.chCnt[key(S.activeCh)]=rteGetHTML();
+  trigSave();closeAIP();toast('AI improvement applied!');
+}
+function closeAIP(){$('aip').classList.add('hidden');S.aiResp=''}
+let _ipO=false;
+function toggleIP(){_ipO=!_ipO;$('ip').classList.toggle('hidden',!_ipO)}
+function setCit(s){S.citationStyle=s;$$('[data-cit]').forEach(el=>el.classList.toggle('active',el.dataset.cit===s))}
+
+/* ─── COPY / DOWNLOAD / PRINT ─── */
+function cpCh(){
+  const text=rteGetText();
+  navigator.clipboard.writeText(text).then(()=>toast('Copied!'));
+}
+function dlCh(){
+  const ch=activeCh();
+  dlTxt(rteGetText(),(ch?.lb||'chapter').replace(/ /g,'_')+'.txt');
+}
+function cpEl(id){navigator.clipboard.writeText($(id)?.textContent||'').then(()=>toast('Copied!'))}
+function dlEl(id,fn){dlTxt($(id)?.textContent||'',fn)}
+function dlTxt(txt,fn){const a=document.createElement('a');a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(txt);a.download=fn;a.click();toast('Downloaded!')}
+
+function printEl(id,title){
+  const el=$(id);const content=el?el.innerHTML||el.textContent||'':'';
+  const isHTML=/<[a-z][\s\S]*>/i.test(content);
+  const w=window.open('','_blank','width=860,height=700');
+  w.document.write(`<!DOCTYPE html><html><head><title>${title}</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+body{font-family:'Crimson Pro',Georgia,serif;font-size:16px;line-height:1.85;padding:48px 64px;color:#1E1A14;max-width:780px;margin:0 auto}
+h1,h2,h3{font-family:'Playfair Display',serif;color:#2E6B50;margin-top:1.4em;margin-bottom:.5em}
+h1{font-size:26px}h2{font-size:21px}h3{font-size:17px}
+p{margin:0 0 1em}ul,ol{padding-left:24px;margin:8px 0}li{margin-bottom:4px}
+blockquote{border-left:4px solid #2E6B50;padding:8px 16px;margin:12px 0;font-style:italic;color:#5A5248}
+strong{font-weight:700}em{font-style:italic}
+.header{border-bottom:2px solid #2E6B50;padding-bottom:16px;margin-bottom:32px}
+.footer{border-top:1px solid #E8E0D0;margin-top:40px;padding-top:12px;font-size:12px;color:#968E82}
+@media print{body{padding:20px 40px}}
+</style></head><body>
+<div class="header"><h1 style="margin:0">${title}</h1><div style="font-size:13px;color:#968E82;margin-top:6px">ScholarFlow AI · Generated ${todayD()}</div></div>
+${isHTML?content:`<pre style="white-space:pre-wrap;font-family:'Crimson Pro',Georgia,serif">${esc(content)}</pre>`}
+<div class="footer">ScholarFlow AI — Academic Companion · Exported ${new Date().toLocaleString()}</div>
+</body></html>`);
+  w.document.close();w.onload=()=>{w.focus();w.print()};toast('Print window opened!');
+}
+
+function printCurrent(){
+  const nav=S.activeNav;
+  if(nav==='workspace'){
+    const ch=activeCh();
+    const w=window.open('','_blank','width=860,height=700');
+    w.document.write(`<!DOCTYPE html><html><head><title>${ch?.lb||'Chapter'}</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>body{font-family:'Crimson Pro',Georgia,serif;font-size:16px;line-height:1.85;padding:48px 64px;color:#1E1A14;max-width:780px;margin:0 auto}h1,h2,h3{font-family:'Playfair Display',serif;color:#2E6B50}p{margin:0 0 1em}ul,ol{padding-left:24px}blockquote{border-left:4px solid #2E6B50;padding:8px 16px;font-style:italic}@media print{body{padding:20px 40px}}</style>
+</head><body>
+<h1 style="font-size:26px;border-bottom:2px solid #2E6B50;padding-bottom:12px;margin-bottom:28px">${ch?.lb||'Chapter'}${ch?.sb?' — '+ch.sb:''}</h1>
+${rteGetHTML()}
+<div style="border-top:1px solid #E8E0D0;margin-top:40px;padding-top:12px;font-size:12px;color:#968E82">ScholarFlow AI · ${activeProj().title} · ${todayD()}</div>
+</body></html>`);
+    w.document.close();w.onload=()=>{w.focus();w.print()};
+  }else if(nav==='practical'){printEl('pr-ob2','Practical Report');}
+  else if(nav==='logbook'){printEl('lb-ob2','Log Entry');}
+  else if(nav==='notes'){printNote();}
+  else window.print();
+}
+function printNote(){
+  const n=S.notes.find(x=>x.id===S.activeNote);if(!n){toast('No note selected','er');return}
+  const w=window.open('','_blank','width=800,height=600');
+  w.document.write(`<!DOCTYPE html><html><head><title>${n.title}</title><style>body{font-family:'Georgia',serif;font-size:16px;line-height:1.8;padding:40px 60px;color:#1E1A14;max-width:780px;margin:0 auto}h1{font-size:22px;border-bottom:2px solid #2E6B50;padding-bottom:8px}pre{white-space:pre-wrap;font-family:inherit}</style></head><body><h1>${esc(n.title)}</h1><pre>${esc(n.content)}</pre></body></html>`);
+  w.document.close();w.onload=()=>{w.focus();w.print()};
+}
+function dlNote(){
+  const n=S.notes.find(x=>x.id===S.activeNote);if(!n){toast('No note selected','er');return}
+  dlTxt(n.title+'\n\n'+n.content,n.title.replace(/ /g,'_')+'.txt');
+}
+
+/* ─── PDF EXPORT ─── */
+async function exportPDF(elId,title){
+  toast('Preparing PDF…','in');
+  try{
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const margin=20;const pageW=210;const usableW=pageW-margin*2;
+    const pageH=297;let y=margin;
+
+    // Header
+    doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(46,107,80);
+    doc.text(title,margin,y);y+=8;
+    doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(150,142,130);
+    doc.text('ScholarFlow AI  ·  '+todayD(),margin,y);y+=6;
+    doc.setDrawColor(46,107,80);doc.setLineWidth(0.5);doc.line(margin,y,pageW-margin,y);y+=8;
+
+    // Content
+    const el=$(elId);
+    const rawText=el?el.innerText||el.textContent||'':'';
+    doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(30,26,20);
+
+    const lines=doc.splitTextToSize(rawText,usableW);
+    for(const line of lines){
+      if(y+6>pageH-margin){doc.addPage();y=margin;}
+      doc.text(line,margin,y);y+=5.5;
+    }
+
+    // Footer
+    const pages=doc.internal.getNumberOfPages();
+    for(let i=1;i<=pages;i++){
+      doc.setPage(i);doc.setFontSize(9);doc.setTextColor(150,142,130);
+      doc.text('ScholarFlow AI',margin,pageH-10);
+      doc.text('Page '+i+' of '+pages,pageW-margin,pageH-10,{align:'right'});
+    }
+
+    const fn=title.replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_'+new Date().toISOString().slice(0,10)+'.pdf';
+    doc.save(fn);toast('PDF downloaded! 📄');
+  }catch(err){
+    toast('PDF error: '+err.message,'er');console.error(err);
+  }
+}
+
+async function exportChapterPDF(){
+  toast('Preparing PDF…','in');
+  try{
+    const {jsPDF}=window.jspdf;
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const margin=20;const pageW=210;const usableW=pageW-margin*2;const pageH=297;let y=margin;
+    const ch=activeCh();const proj=activeProj();
+
+    // Header
+    doc.setFont('helvetica','bold');doc.setFontSize(20);doc.setTextColor(46,107,80);
+    doc.text(ch?.lb||'Chapter',margin,y);y+=7;
+    if(ch?.sb){doc.setFontSize(13);doc.setFont('helvetica','italic');doc.text(ch.sb,margin,y);y+=6;}
+    doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(150,142,130);
+    doc.text(proj.title+'  ·  '+todayD(),margin,y);y+=6;
+    doc.setDrawColor(46,107,80);doc.setLineWidth(0.6);doc.line(margin,y,pageW-margin,y);y+=8;
+
+    // Parse HTML content from RTE
+    const ed=getRTE();
+    const children=ed.childNodes;
+    doc.setTextColor(30,26,20);
+
+    function addText(text,opts={}){
+      if(!text.trim())return;
+      const lines=doc.splitTextToSize(text.trim(),usableW-(opts.indent||0));
+      for(const line of lines){
+        if(y+6>pageH-margin){doc.addPage();y=margin;}
+        doc.text(line,margin+(opts.indent||0),y);y+=5.5;
+      }
+    }
+
+    function processNode(node){
+      if(node.nodeType===3){// text node
+        addText(node.textContent);return;
+      }
+      const tag=node.tagName?.toLowerCase();
+      if(!tag)return;
+      if(tag==='h1'||tag==='h2'||tag==='h3'){
+        y+=3;const sz=tag==='h1'?15:tag==='h2'?13:11;
+        doc.setFont('helvetica','bold');doc.setFontSize(sz);doc.setTextColor(46,107,80);
+        addText(node.innerText);
+        doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(30,26,20);y+=2;
+      }else if(tag==='p'){
+        addText(node.innerText);y+=2;
+      }else if(tag==='blockquote'){
+        doc.setFont('helvetica','italic');doc.setTextColor(90,82,72);
+        addText(node.innerText,{indent:6});
+        doc.setFont('helvetica','normal');doc.setTextColor(30,26,20);y+=2;
+      }else if(tag==='ul'||tag==='ol'){
+        Array.from(node.children).forEach((li,i)=>{
+          const bullet=tag==='ul'?'•':(i+1)+'.';
+          doc.setFont('helvetica','normal');doc.setFontSize(11);
+          const lines=doc.splitTextToSize(li.innerText.trim(),usableW-12);
+          lines.forEach((line,li2)=>{
+            if(y+6>pageH-margin){doc.addPage();y=margin;}
+            doc.text(li2===0?bullet:'',margin+2,y);
+            doc.text(line,margin+8,y);y+=5.2;
+          });
+        });y+=2;
+      }else if(tag==='br'){y+=3;}
+      else{Array.from(node.childNodes).forEach(processNode);}
+    }
+
+    Array.from(children).forEach(processNode);
+
+    // Footer
+    const pages=doc.internal.getNumberOfPages();
+    for(let i=1;i<=pages;i++){
+      doc.setPage(i);doc.setFontSize(9);doc.setTextColor(150,142,130);
+      doc.text('ScholarFlow AI  ·  '+proj.title,margin,pageH-10);
+      doc.text('Page '+i+' of '+pages,pageW-margin,pageH-10,{align:'right'});
+    }
+    const fn=(ch?.lb||'chapter').replace(/ /g,'_')+'_'+new Date().toISOString().slice(0,10)+'.pdf';
+    doc.save(fn);toast('PDF downloaded! 📄');
+  }catch(err){toast('PDF error: '+err.message,'er');console.error(err);}
+}
+
+/* ─── AI CHAT ─── */
+let _chatOpen=false,_chatLoading=false;
+function toggleChat(){
+  _chatOpen=!_chatOpen;
+  $('chat-panel').classList.toggle('hidden',!_chatOpen);
+  if(_chatOpen){
+    $('chat-inp').focus();
+    $('chat-fab').classList.add('has-msgs');
+  }
+}
+function clearChat(){
+  S.chatHistory=[];$('chat-msgs').innerHTML='<div class="chat-msg ai">👋 Hi! I\'m your AI study assistant. Ask me anything — concepts, citations, writing tips, research help, or paste text for me to review!</div>';
+  persist();
+}
+function chatQuick(q){$('chat-inp').value=q;sendChat();}
+function autoResizeChatInp(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+function chatKeydown(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}}
+
+function appendChatMsg(role,text,loading=false){
+  const msgs=$('chat-msgs');
+  const div=document.createElement('div');
+  div.className='chat-msg '+role+(loading?' loading':'');
+  if(loading){div.innerHTML='<div class="chat-typing"><span></span><span></span><span></span></div>';}
+  else{div.textContent=text;}
+  msgs.appendChild(div);
+  msgs.scrollTop=msgs.scrollHeight;
+  return div;
+}
+
+async function sendChat(){
+  if(_chatLoading)return;
+  const inp=$('chat-inp');const q=inp.value.trim();if(!q)return;
+  inp.value='';inp.style.height='auto';
+  $('chat-chips').style.display='none';
+
+  appendChatMsg('user',q);
+  S.chatHistory.push({role:'user',content:q});
+
+  _chatLoading=true;$('chat-send').disabled=true;
+  const loadDiv=appendChatMsg('ai','',true);
+
+  // Include current chapter context if available
+  const chCtx=rteGetText().slice(0,600);
+  const systemPrompt=`You are ScholarFlow AI — a friendly, expert academic assistant for Nigerian university students. Be concise, helpful, and encouraging. If there's chapter content provided, reference it when relevant.${chCtx?'\n\nCurrent chapter excerpt: '+chCtx:''}`;
+
+  try{
+    const msgs=S.chatHistory.slice(-10).map(m=>({role:m.role,content:m.content}));
+    const r=await callClaude(msgs,systemPrompt,800);
+    loadDiv.className='chat-msg ai';loadDiv.textContent=r;
+    S.chatHistory.push({role:'assistant',content:r});
+    persist();
+  }catch(e){
+    loadDiv.className='chat-msg ai';
+    loadDiv.textContent=e.message.includes('api_key')||e.message.includes('401')?'Please add your API key in Settings ⚙ to use the AI assistant.':'Error: '+e.message;
+  }
+  _chatLoading=false;$('chat-send').disabled=false;
+  $('chat-msgs').scrollTop=$('chat-msgs').scrollHeight;
+}
+
+/* ─── EMAIL ─── */
+let _emailCtx='';
+function openEmailMo(ctx){
+  _emailCtx=ctx;
+  $('em-to').value=S.userEmail||'';
+  const titles={backup:'ScholarFlow AI — Full Backup',chapter:'Chapter Export — '+(activeCh()?.lb||''),practical:'Practical Report',logbook:'Log Entry — '+todayD(),presentation:'Presentation Slides',references:'Reference List',note:'Note — '+(S.notes.find(x=>x.id===S.activeNote)?.title||''),planner:'Study Schedule'};
+  $('em-subj').value=titles[ctx]||'ScholarFlow AI Export';
+  const prev=$('em-preview');
+  let content='';
+  if(ctx==='chapter')content=rteGetText().slice(0,300)+'…';
+  else if(ctx==='practical')content=($('pr-ob2').textContent||'').slice(0,300)+'…';
+  else if(ctx==='logbook')content=($('lb-ob2').textContent||'').slice(0,300)+'…';
+  else if(ctx==='note'){const n=S.notes.find(x=>x.id===S.activeNote);content=n?n.content.slice(0,300)+'…':'';}
+  if(content){prev.style.display='block';prev.textContent='Preview:\n'+content;}else prev.style.display='none';
+  $('email-mo').classList.remove('hidden');
+  setTimeout(()=>$('em-to').focus(),100);
+}
+function closeEmailMo(){$('email-mo').classList.add('hidden')}
+function sendEmail(){
+  const to=$('em-to').value.trim();if(!to){toast('Please enter an email address','er');return}
+  if(S.userEmail!==to){S.userEmail=to;persist();}
+  const subj=encodeURIComponent($('em-subj').value||'ScholarFlow AI Export');
+  const msg=$('em-msg').value;let body='';
+  if(_emailCtx==='backup'){
+    body=`ScholarFlow AI — Data Backup\nDate: ${todayD()}\n\n=== PROJECTS ===\n${S.projects.map(p=>p.title).join('\n')}\n\n=== CHAPTERS ===\n${CHS.map(c=>{const t=S.chCnt[key(c.id)];return t?`${c.lb}:\n${t.slice(0,200)}…`:''}).filter(Boolean).join('\n\n')}\n\n=== NOTES ===\n${S.notes.map(n=>n.title+': '+n.content.slice(0,100)).join('\n')}\n\n=== REFERENCES ===\n${S.refs.map(r=>`${r.au} (${r.yr}). ${r.ti}.`).join('\n')}\n\n=== LOG ENTRIES ===\n${S.logEntries.map(e=>`${e.date}: ${e.ac}`).join('\n')}`;
+  }else if(_emailCtx==='chapter'){body=(activeCh()?.lb||'Chapter')+'\n\n'+rteGetText();}
+  else if(_emailCtx==='practical'){body=$('pr-ob2').textContent||'';}
+  else if(_emailCtx==='logbook'){body=$('lb-ob2').textContent||'';}
+  else if(_emailCtx==='presentation'){body=$('ps-sl').innerText||'';}
+  else if(_emailCtx==='references'){body=S.refs.map(r=>`${r.au} (${r.yr}). ${r.ti}. ${r.sr} ${r.vl} ${r.ul}`).join('\n\n');}
+  else if(_emailCtx==='note'){const n=S.notes.find(x=>x.id===S.activeNote);body=n?n.title+'\n\n'+n.content:'';}
+  else if(_emailCtx==='planner'){body='Study Schedule — '+todayD()+'\n\n'+S.planItems.map(i=>`[${i.done?'✓':' '}] ${i.title} (${i.type})${i.date?' — Due: '+i.date:''}`).join('\n');}
+  if(msg)body=msg+'\n\n---\n\n'+body;
+  window.location.href=`mailto:${to}?subject=${subj}&body=${encodeURIComponent(body)}`;
+  closeEmailMo();toast('Email client opened!');
+}
+
+/* ─── PRACTICAL ─── */
+async function genPractical(){
+  const ti=$('pr-ti').value.trim();if(!ti){toast('Please enter a report title','er');return}
+  const bt=$('pr-bt');setLd(bt,true,'⟳ Generating…');
+  try{
+    const msg=`Generate a complete professional academic practical report:\nTitle: ${ti}\nObjectives: ${$('pr-ob').value}\nMaterials: ${$('pr-ma').value}\nProcedure: ${$('pr-pr').value}\nObservations: ${$('pr-ov').value}\nResults: ${$('pr-rs').value}\nDiscussion: ${$('pr-dc').value}\nConclusion: ${$('pr-cn').value}\n\nWrite a complete, professionally formatted report using ${S.citationStyle} citation style with proper headings and thorough academic language.`;
+    const r=await callClaude([{role:'user',content:msg}],'',2000);
+    $('pr-ob2').textContent=r;S.savedOutputs.practical=r;persist();
+    $('pr-out').classList.remove('hidden');$('pr-out').scrollIntoView({behavior:'smooth',block:'nearest'});toast('Practical report generated!');
+  }catch(e){toast('Error: '+e.message,'er')}
+  setLd(bt,false,'⚗ Generate Practical Report');
+}
+
+/* ─── PRESENTATIONS ─── */
+function setSlideTh(t){S.slideTh=t;$$('[data-sth]').forEach(el=>el.classList.toggle('active',el.dataset.sth===t))}
+async function genPresentation(){
+  const inp=$('ps-in').value.trim();if(!inp){toast('Please paste some content first','er');return}
+  const bt=$('ps-bt');setLd(bt,true,'⟳ Building Slides…');
+  try{
+    const msg=`Convert this academic content into ${S.slideTh}-themed presentation slides with speaker notes.\nReturn ONLY a valid JSON array — no markdown fences, no explanation.\nFormat: [{"title":"Slide Title","bullets":["point 1","point 2","point 3"],"notes":"speaker notes here"},...]\nGenerate 8-10 slides. Content:\n\n${inp.slice(0,1600)}`;
+    const r=await callClaude([{role:'user',content:msg}],'Return ONLY valid JSON array. No markdown. No text before or after.',1500);
+    const slides=JSON.parse(r.replace(/```json|```/g,'').trim());
+    $('ps-cnt').textContent=slides.length+' Slides Generated';
+    const html=slides.map((s,i)=>`<div class="scard"><div class="flex ic g8" style="margin-bottom:10px"><div class="sn">${i+1}</div><div class="sti">${esc(s.title||'')}</div></div><ul class="sbul">${(s.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join('')}</ul>${s.notes?`<div class="snot">🎙 ${esc(s.notes)}</div>`:''}</div>`).join('');
+    $('ps-sl').innerHTML=html;
+    S.savedOutputs.presentation=slides.map((s,i)=>`Slide ${i+1}: ${s.title}\n${s.bullets.join('\n')}\nNotes: ${s.notes||''}`).join('\n\n');persist();
+    $('ps-out').classList.remove('hidden');toast('Presentation ready!');
+  }catch(e){toast('Could not parse slides: '+e.message,'er')}
+  setLd(bt,false,'🎞 Generate Slides');
+}
+
+/* ─── REFERENCES ─── */
+function setRefCit(s){S.citationStyle=s;$$('[data-rc]').forEach(el=>el.classList.toggle('active',el.dataset.rc===s));renderRefs()}
+function addRef(){
+  const au=$('rf-au').value.trim(),ti=$('rf-ti').value.trim();
+  if(!au||!ti){toast('Author and title are required','er');return}
+  S.refs.push({id:uid(),au,yr:$('rf-yr').value.trim(),ti,sr:$('rf-sr').value.trim(),vl:$('rf-vl').value.trim(),ul:$('rf-ul').value.trim()});
+  ['rf-au','rf-yr','rf-ti','rf-sr','rf-vl','rf-ul'].forEach(id=>$(id).value='');
+  renderRefs();persist();toast('Reference added!');
+}
+function renderRefs(){
+  const q=($('rf-sch')?.value||'').toLowerCase();
+  const flt=S.refs.filter(r=>!q||`${r.au} ${r.ti} ${r.sr}`.toLowerCase().includes(q));
+  const el=$('rf-ls');
+  if(!flt.length){el.innerHTML=`<div class="es"><span class="es-ic">🗂</span><div class="es-tx">${q?'No matching references.':'No references yet. Add your first reference above.'}</div></div>`;return}
+  el.innerHTML=flt.map(r=>`<div class="ri"><div class="ri-ic">📄</div><div class="ri-bd"><div class="ri-mn"><strong>${esc(r.au)}</strong>${r.yr?` (${esc(r.yr)}).`:''} <em>${esc(r.ti)}</em>.</div>${r.sr?`<div class="ri-sr">${esc(r.sr)}${r.vl?' '+esc(r.vl):''}</div>`:''} ${r.ul?`<div class="ri-ul">🔗 ${esc(r.ul)}</div>`:''}<div class="ri-mt">📌 ${S.citationStyle}</div></div><div class="flex-col g6"><button class="btn btn-s btn-xs" onclick="cpRef('${r.id}')">⧉ Copy</button><button class="btn btn-d btn-xs" onclick="rmRef('${r.id}')">Remove</button></div></div>`).join('');
+}
+function cpRef(id){const r=S.refs.find(x=>x.id===id);if(!r)return;navigator.clipboard.writeText(`${r.au} (${r.yr}). ${r.ti}. ${r.sr} ${r.vl} ${r.ul}`).then(()=>toast('Reference copied!'))}
+function rmRef(id){S.refs=S.refs.filter(r=>r.id!==id);renderRefs();persist()}
+function exportRefs(){
+  const txt=S.refs.map((r,i)=>`${i+1}. ${r.au} (${r.yr}). ${r.ti}. ${r.sr} ${r.vl} ${r.ul}`).join('\n\n');
+  dlTxt(txt,'references.txt');
+}
+
+/* ─── LOGBOOK ─── */
+async function genLog(){
+  const ac=$('lb-ac').value.trim();if(!ac){toast('Please describe your activities','er');return}
+  const bt=$('lb-bt');setLd(bt,true,'⟳ Generating…');
+  try{
+    const msg=`Convert this student activity record into a professional SIWES/internship daily log entry:\nDate: ${$('lb-dt').value||todayD()}\nOrganisation: ${$('lb-or').value}\nDepartment: ${$('lb-dp').value}\nSupervisor: ${$('lb-sp').value}\nActivities: ${ac}\n\nFormat as a complete professional logbook entry with: Date, Organisation, Department, Supervisor's Name, Objectives for the Day, Activities Carried Out (numbered), Observations Made, Skills Acquired, Challenges Encountered, and blank Supervisor's Remarks section. Write in third person academic style.`;
+    const r=await callClaude([{role:'user',content:msg}],'',1000);
+    $('lb-ob2').textContent=r;S.savedOutputs.logbook=r;persist();
+    $('lb-out').classList.remove('hidden');$('lb-out').scrollIntoView({behavior:'smooth',block:'nearest'});
+    S.logEntries.unshift({id:uid(),date:$('lb-dt').value||todayD(),ac:ac.slice(0,70)+'…',fmt:r});
+    renderLogHist();persist();toast('Log entry generated!');
+  }catch(e){toast('Error: '+e.message,'er')}
+  setLd(bt,false,'📓 Generate Log Entry');
+}
+function renderLogHist(){
+  const el=$('lb-hist');if(!S.logEntries.length){el.innerHTML='';return}
+  el.innerHTML=`<div style="font-size:14px;font-weight:700;color:var(--text2);margin-bottom:12px">📋 Previous Entries (${S.logEntries.length})</div>`
+    +S.logEntries.map(e=>`<div class="le"><span style="font-size:22px">📓</span><div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">${esc(e.date||'—')}</div><div style="font-size:12px;color:var(--text3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.ac)}</div></div><div class="flex g6"><button class="btn btn-s btn-xs" onclick="viewLog('${e.id}')">View</button><button class="btn btn-s btn-xs" onclick="dlLog('${e.id}')">⬇</button><button class="btn btn-s btn-xs" onclick="exportPDF('lb-ob2','Log Entry')" style="color:var(--red)">PDF</button></div></div>`).join('');
+}
+function viewLog(id){const e=S.logEntries.find(x=>x.id===id);if(!e)return;$('lb-ob2').textContent=e.fmt;$('lb-out').classList.remove('hidden');$('lb-out').scrollIntoView({behavior:'smooth'})}
+function dlLog(id){const e=S.logEntries.find(x=>x.id===id);if(!e)return;dlTxt(e.fmt,'log_'+e.date.replace(/ /g,'_')+'.txt')}
+
+/* ─── PLANNER ─── */
+function addPlan(){
+  const ti=$('pl-ti').value.trim();if(!ti){toast('Please enter a task title','er');return}
+  S.planItems.push({id:uid(),title:ti,date:$('pl-dt').value,type:$('pl-ty').value,done:false});
+  $('pl-ti').value='';$('pl-dt').value='';renderPlan();persist();toast('Task added!');
+}
+function renderPlan(){
+  const types=['deadline','assignment','exam','reminder'];
+  const icons={deadline:'⏰',assignment:'📝',exam:'🎓',reminder:'🔔'};
+  const cols={deadline:'var(--red)',assignment:'var(--accent)',exam:'var(--blue)',reminder:'var(--gold)'};
+  let h='';
+  types.forEach(t=>{
+    const items=S.planItems.filter(i=>i.type===t);if(!items.length)return;
+    h+=`<div class="pl-sec"><div class="pl-sl" style="color:${cols[t]}">${icons[t]} ${t.charAt(0).toUpperCase()+t.slice(1)}s <span style="font-size:11px;color:var(--text3);font-weight:400">(${items.length})</span></div>`
+      +items.map(item=>`<div class="pl-it${item.done?' done':''}"><input type="checkbox" ${item.done?'checked':''} onchange="togPlan('${item.id}')" style="accent-color:${cols[t]};width:16px;height:16px;cursor:pointer;flex-shrink:0"/><div style="flex:1;min-width:0"><div class="pi-ti">${esc(item.title)}</div>${item.date?`<div class="pi-dt">📅 ${item.date}</div>`:''}</div><span class="tag" style="background:${cols[t]}22;color:${cols[t]};font-size:11px">${t}</span><button class="btn btn-g btn-xs" style="color:var(--text3)" onclick="rmPlan('${item.id}')">✕</button></div>`).join('')+'</div>';
+  });
+  $('pl-ls').innerHTML=h||`<div class="es"><span class="es-ic">📅</span><div class="es-tx">No tasks yet. Add your first task above.</div></div>`;
+}
+function togPlan(id){const i=S.planItems.find(x=>x.id===id);if(i){i.done=!i.done;renderPlan();persist()}}
+function rmPlan(id){S.planItems=S.planItems.filter(x=>x.id!==id);renderPlan();persist()}
+
+/* ─── NOTES ─── */
+function addNote(){const n={id:uid(),title:'New Note',content:'',updated:ts()};S.notes.unshift(n);S.activeNote=n.id;renderNotes();persist()}
+function renderNotes(){
+  $('nl-cnt').textContent='Notes ('+S.notes.length+')';
+  $('nl-ls').innerHTML=S.notes.map(n=>`<div class="no-it${S.activeNote===n.id?' active':''}" onclick="selNote('${n.id}')"><div class="no-ti">${esc(n.title)}</div><div class="no-pv">${esc(n.content)||'Empty note'}</div><div class="no-tm">${n.updated}</div></div>`).join('');
+  if(S.activeNote){const n=S.notes.find(x=>x.id===S.activeNote);if(n){$('n-ti-i').value=n.title;$('n-ct-i').value=n.content}}
+}
+function selNote(id){S.activeNote=id;renderNotes()}
+function upNoteTitle(){const n=S.notes.find(x=>x.id===S.activeNote);if(!n)return;n.title=$('n-ti-i').value;n.updated=ts();renderNotes();persist()}
+function upNoteContent(){const n=S.notes.find(x=>x.id===S.activeNote);if(!n)return;n.content=$('n-ct-i').value;n.updated=ts();persist()}
+
+/* ─── FILES ─── */
+function handleFiles(e){
+  Array.from(e.target.files).forEach(f=>{S.files.push({id:uid(),name:f.name,size:(f.size/1024).toFixed(1)+' KB',type:f.type,added:ts()})});
+  renderFiles();persist();toast(e.target.files.length+' file(s) added');e.target.value='';
+}
+function renderFiles(){
+  const gd=$('fg'),em=$('fe');
+  const im={'application/pdf':'📄','image/png':'🖼','image/jpeg':'🖼','text/plain':'📃','application/msword':'📝'};
+  if(!S.files.length){gd.innerHTML='';em.classList.remove('hidden');return}
+  em.classList.add('hidden');
+  gd.innerHTML=S.files.map(f=>`<div class="fc"><div class="fc-ic">${im[f.type]||'📎'}</div><div class="fc-nm" title="${esc(f.name)}">${esc(f.name)}</div><div class="fc-mt">${f.size} · ${f.added}</div><div class="fc-ac"><button class="btn btn-d btn-xs" onclick="rmFile('${f.id}')">Remove</button></div></div>`).join('');
+}
+function rmFile(id){S.files=S.files.filter(x=>x.id!==id);renderFiles();persist()}
+
+/* ─── DATA MANAGEMENT ─── */
+function exportAllData(){dlTxt(JSON.stringify(S,null,2),'scholarflow_backup_'+new Date().toISOString().slice(0,10)+'.json')}
+function importData(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{const data=JSON.parse(ev.target.result);Object.assign(S,data);persist();setTheme(S.theme);renderCP();updateTB();loadEd();renderNotes();renderPlan();renderLogHist();renderRefs();toast('Data imported! 🎉');}
+    catch(err){toast('Invalid backup file','er');}
+  };reader.readAsText(file);
+}
+function clearData(){
+  if(!confirm('Clear ALL data? This cannot be undone.'))return;
+  localStorage.removeItem('sf3_s');
+  Object.assign(S,DEFAULT_S);
+  if(_currentUser)cloudSave();
+  location.reload();
+}
+
+/* ─── API KEY ─── */
+function saveKey(){
+  const k=$('api-ki').value.trim();if(!k){toast('Please paste your API key','er');return}
+  S.apiKey=k;persist();toast('API key saved! AI features active. ✓');
+}
+
+/* ─── HELPERS ─── */
+function setLd(btn,on,lb){
+  if(!btn)return;btn.disabled=on;
+  btn.innerHTML=on?`<svg width="14" height="14" viewBox="0 0 24 24" style="animation:spin .8s linear infinite;vertical-align:middle"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2.5" stroke-dasharray="31" stroke-dashoffset="10" stroke-linecap="round"/></svg> ${lb}`:lb;
+}
+
+/* ─── KEYBOARD ─── */
+document.addEventListener('keydown',e=>{
+  if(e.target.id==='rte-ed'||e.target.id==='chat-inp')return;
+  if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();trigSave();toast('Saved!')}
+  if(e.key==='Escape'){closeAIP();closeProjMod();closeThemePicker();closeEmailMo();closeMobSB();if(_chatOpen)toggleChat();}
+});
+
+/* ─── DRAG & DROP UPLOAD ─── */
+document.addEventListener('dragover',e=>e.preventDefault());
+document.addEventListener('drop',e=>{
+  e.preventDefault();if(S.activeNav!=='files')return;
+  const files=Array.from(e.dataTransfer.files);
+  files.forEach(f=>S.files.push({id:uid(),name:f.name,size:(f.size/1024).toFixed(1)+' KB',type:f.type,added:ts()}));
+  renderFiles();persist();if(files.length)toast(files.length+' file(s) dropped!');
+});
+
+/* ─── INIT ─── */
+function init(){
+  setTheme(S.theme);renderCP();updateTB();loadEd();renderNotes();renderPlan();renderLogHist();renderRefs();renderFiles();
+  const k=S.apiKey||'';
+  if(k&&$('api-ki'))$('api-ki').value=k;
+  if($('user-email'))$('user-email').value=S.userEmail||'';
+  if($('acct-email')&&_currentUser)$('acct-email').textContent=_currentUser.email||'—';
+  // Restore chat history
+  if(S.chatHistory.length>0){
+    $('chat-chips').style.display='none';
+    S.chatHistory.forEach(m=>{
+      if(m.role!=='system')appendChatMsg(m.role==='assistant'?'ai':'user',m.content);
+    });
+  }
+  if(!k)setTimeout(()=>toast('👋 Welcome! Add your API key in Settings to activate AI.','in'),1400);
+}
+document.addEventListener('DOMContentLoaded',checkExistingSession);
+</script>
+</body>
+</html>
